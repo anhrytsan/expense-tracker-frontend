@@ -1,0 +1,14 @@
+<div class="dashboard-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Вітаємо, {{ user()?.email || 'Гість' }}!</mat-card-title>
+      <mat-card-subtitle>Це ваша головна панель.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>Тут буде відображатись основна інформація про витрати.</p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="warn" (click)="logout()">Вийти</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
