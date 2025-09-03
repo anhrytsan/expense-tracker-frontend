@@ -1,0 +1,18 @@
+<app-employee-create (employeeCreated)="loadEmployees()"></app-employee-create>
+
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Список співробітників</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-list role="list">
+      @for (emp of employees(); track emp._id) {
+        <mat-list-item role="listitem">
+          {{ emp.name }} - {{ emp.position }} (Відділ: {{ emp.department?.name }})
+        </mat-list-item>
+      } @empty {
+        <mat-list-item>Співробітників поки що немає.</mat-list-item>
+      }
+    </mat-list>
+  </mat-card-content>
+</mat-card>

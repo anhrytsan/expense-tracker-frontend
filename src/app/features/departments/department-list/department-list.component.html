@@ -1,0 +1,18 @@
+<app-department-create (departmentCreated)="loadDepartments()"></app-department-create>
+
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Список відділів</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-list role="list">
+      @for (dep of departments(); track dep._id) {
+        <mat-list-item role="listitem">
+          {{ dep.name }} (Співробітників: {{ dep.numberOfEmployees }})
+        </mat-list-item>
+      } @empty {
+        <mat-list-item>Відділів поки що немає.</mat-list-item>
+      }
+    </mat-list>
+  </mat-card-content>
+</mat-card>

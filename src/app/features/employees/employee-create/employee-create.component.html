@@ -1,0 +1,31 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Додати нового співробітника</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Ім'я співробітника</mat-label>
+        <input matInput formControlName="name" placeholder="Іван Іванов">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Посада</mat-label>
+        <input matInput formControlName="position" placeholder="Менеджер">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Відділ</mat-label>
+        <mat-select formControlName="department">
+          @for (dep of departments(); track dep._id) {
+            <mat-option [value]="dep._id">{{ dep.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit" [disabled]="employeeForm.invalid">
+        Створити
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>

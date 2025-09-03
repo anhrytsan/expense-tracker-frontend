@@ -1,0 +1,17 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Створити новий відділ</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Назва відділу</mat-label>
+        <input matInput formControlName="name" placeholder="Наприклад, Бухгалтерія">
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit" [disabled]="departmentForm.invalid">
+        Створити
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>
