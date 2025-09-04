@@ -30,7 +30,7 @@
         @for (item of data.byDepartment; track item._id) {
         <mat-list-item>
           <div class="department-limit">
-            <span class="department-name">{{ item.department.name }}</span>
+            <span class="department-name">{{ item.department?.name }}</span>
             <div class="progress-container">
               <mat-progress-bar
                 mode="determinate"
