@@ -26,7 +26,7 @@ import { FormsModule } from '@angular/forms';
     FormsModule,
   ],
   templateUrl: './department-list.component.html',
-  styleUrl: './department-list.component.scss'
+  styleUrl: './department-list.component.scss',
 })
 export class DepartmentListComponent implements OnInit {
   private departmentService = inject(DepartmentService);
@@ -44,11 +44,19 @@ export class DepartmentListComponent implements OnInit {
   // Request departments initial data after component created
   ngOnInit(): void {
     // Ask service to load data on init.
-    this.departmentService.getDepartments().subscribe()
+    this.departmentService.getDepartments().subscribe();
   }
 
   loadDepartments(): void {
     this.departmentService.getDepartments().subscribe();
+  }
+
+  onBlurSave(department: Department): void {
+    setTimeout(() => {
+      if (this.editingDepartmentId === department._id) {
+        this.onSave(department);
+      }
+    }, 150);
   }
 
   onEdit(department: Department): void {
