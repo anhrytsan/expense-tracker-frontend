@@ -17,22 +17,11 @@ import { DepartmentCreateComponent } from '../department-create/department-creat
 export class DepartmentListComponent implements OnInit {
   private departmentService = inject(DepartmentService);
 
-  departments = signal<Department[]>([]);
+  departments = this.departmentService.departments;
 
   // Request departments initial data after component created
   ngOnInit(): void {
-    this.loadDepartments();
-  }
-
-  loadDepartments() {
-    this.departmentService.getDepartments().subscribe({
-      next: (data) => {
-        this.departments.set(data);
-      },
-
-      error: (err) => {
-        console.error('Помилка отримання відділів', err);
-      }
-    });
+    // Ask service to load data on init.
+    this.departmentService.getDepartments().subscribe()
   }
 }

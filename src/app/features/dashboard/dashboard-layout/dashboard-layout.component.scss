@@ -1,0 +1,28 @@
+.dashboard-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 240px;
+}
+
+.sidenav-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.content {
+  padding: 24px;
+  background-color: #fafafa;
+  height: 100%;
+}

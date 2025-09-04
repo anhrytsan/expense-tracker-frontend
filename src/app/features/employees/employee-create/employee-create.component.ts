@@ -30,7 +30,7 @@ export class EmployeeCreateComponent {
   private employeeService = inject(EmployeeService);
   private departmentService = inject(DepartmentService);
 
-  departments = signal<Department[]>([]);
+  departments = this.departmentService.departments;
 
   // Create event 'employeeCreated' and emit this event when department is created
   // For parent component
@@ -41,13 +41,6 @@ export class EmployeeCreateComponent {
     position: ['', Validators.required],
     department: ['', Validators.required],
   });
-
-  ngOnInit(): void {
-    // Load departments list on component initialization
-    this.departmentService.getDepartments().subscribe((data) => {
-      this.departments.set(data);
-    });
-  }
 
   onSubmit() {
     if (this.employeeForm.valid) {

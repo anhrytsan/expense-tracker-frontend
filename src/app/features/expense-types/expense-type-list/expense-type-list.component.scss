@@ -1,0 +1,20 @@
+mat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+mat-list-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.type-name {
+  flex-grow: 1;
+}

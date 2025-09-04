@@ -7,11 +7,11 @@
   <mat-card-content>
     <mat-list role="list">
       @for (emp of employees(); track emp._id) {
-        <mat-list-item role="listitem">
-          {{ emp.name }} - {{ emp.position }} (Відділ: {{ emp.department?.name }})
-        </mat-list-item>
+      <mat-list-item role="listitem">
+        {{ emp.name }} - {{ emp.position }} (Відділ: {{ emp.department.name }})
+      </mat-list-item>
       } @empty {
-        <mat-list-item>Співробітників поки що немає.</mat-list-item>
+      <mat-list-item>Співробітників поки що немає.</mat-list-item>
       }
     </mat-list>
   </mat-card-content>

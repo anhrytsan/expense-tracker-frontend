@@ -1,0 +1,19 @@
+<app-expense-create></app-expense-create>
+
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Список витрат</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-list role="list">
+      @for (exp of expenses(); track exp._id) {
+      <mat-list-item role="listitem">
+        {{ exp.date | date : 'dd.MM.yyyy' }} - <strong>{{ exp.amount }} грн</strong> -
+        {{ exp.expenseType.name }} ({{ exp.employee.name }} / {{ exp.department.name }})
+      </mat-list-item>
+      } @empty {
+      <mat-list-item>Витрат поки що немає.</mat-list-item>
+      }
+    </mat-list>
+  </mat-card-content>
+</mat-card>

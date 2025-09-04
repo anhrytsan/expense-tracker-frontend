@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
-import { Department } from './department.service'; // Імпортуємо, бо співробітник містить відділ
+import { Injectable, inject, signal } from '@angular/core';
+import { Department } from './department.service';
+import { tap } from 'rxjs';
 
 export interface Employee {
   _id: string;
@@ -24,11 +25,19 @@ export class EmployeeService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:3000/api/employees';
 
+  private employeesPrivate = signal<Employee[]>([]);
+  public readonly employees = this.employeesPrivate.asReadonly();
+
   getEmployees() {
-    return this.http.get<Employee[]>(this.apiUrl);
+    return this.http.get<Employee[]>(this.apiUrl).pipe(
+      tap(data => this.employeesPrivate.set(data))
+    );
   }
 
   createEmployee(employeeData: CreateEmployeeDto) {
-    return this.http.post<Employee>(this.apiUrl, employeeData);
+    return this.http.post<Employee>(this.apiUrl, employeeData).pipe(
+      // Update employees list after creating
+      tap(() => this.getEmployees().subscribe())
+    );
   }
 }

@@ -1,0 +1,36 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Встановити місячний ліміт</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="limitForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Відділ</mat-label>
+        <mat-select formControlName="department">
+          @for (dep of departments(); track dep._id) {
+            <mat-option [value]="dep._id">{{ dep.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Рік</mat-label>
+        <input matInput type="number" formControlName="year" placeholder="2025" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Місяць (1-12)</mat-label>
+        <input matInput type="number" formControlName="month" placeholder="9" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Сума ліміту</mat-label>
+        <input matInput type="number" formControlName="limitAmount" placeholder="5000" />
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit" [disabled]="limitForm.invalid">
+        Встановити
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>

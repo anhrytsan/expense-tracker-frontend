@@ -1,0 +1,35 @@
+@if (showForm()) {
+  <app-expense-type-form
+    [expenseType]="selectedExpenseType()"
+    (formClose)="onFormClose()">
+  </app-expense-type-form>
+}
+
+@if (!showForm()) {
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Типи витрат</mat-card-title>
+      <button mat-icon-button color="primary" class="add-button" (click)="onAddNew()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-list role="list">
+        @for (type of expenseTypes(); track type._id) {
+          <mat-list-item role="listitem">
+            <span class="type-name">{{ type.name }} (Ліміт: {{ type.limit }} грн)</span>
+            <span class="spacer"></span>
+            <button mat-icon-button color="accent" (click)="onEdit(type)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteExpenseType(type._id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-list-item>
+        } @empty {
+          <mat-list-item>Типів витрат ще не створено.</mat-list-item>
+        }
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+}

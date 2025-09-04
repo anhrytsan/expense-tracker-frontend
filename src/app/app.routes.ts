@@ -3,6 +3,13 @@ import { LoginComponent } from './features/auth/login/login.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { authGuard } from './core/guards/auth.guard';
 
+import { DashboardLayoutComponent } from './features/dashboard/dashboard-layout/dashboard-layout.component';
+import { ExpenseListComponent } from './features/expenses/expense-list/expense-list.component';
+import { DepartmentListComponent } from './features/departments/department-list/department-list.component';
+import { EmployeeListComponent } from './features/employees/employee-list/employee-list.component';
+import { ExpenseTypeListComponent } from './features/expense-types/expense-type-list/expense-type-list.component';
+import { MonthlyLimitFormComponent } from './features/monthly-limits/monthly-limit-form/monthly-limit-form.component';
+
 export const routes: Routes = [
   {
     path: '',
@@ -15,7 +22,18 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: DashboardComponent,
-    canActivate: [authGuard], // use authGuard for this route
+    component: DashboardLayoutComponent, // Використовуємо наш новий layout
+    canActivate: [authGuard],
+    children: [
+      { path: '', redirectTo: 'overview', pathMatch: 'full' },
+      { path: 'overview', component: DashboardComponent }, // Старий дашборд тепер "Головна"
+      { path: 'expenses', component: ExpenseListComponent },
+      { path: 'departments', component: DepartmentListComponent },
+      { path: 'employees', component: EmployeeListComponent },
+      { path: 'expense-types', component: ExpenseTypeListComponent },
+      { path: 'limits', component: MonthlyLimitFormComponent },
+    ],
   },
+  // Redirect to dashboard if route doesn't exist
+  { path: '**', redirectTo: 'dashboard' }
 ];

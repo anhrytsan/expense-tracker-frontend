@@ -24,10 +24,6 @@ export class DepartmentCreateComponent {
   private fb = inject(FormBuilder);
   private departmentService = inject(DepartmentService);
 
-  // Create event 'departmentCreated' and emit this event when department is created
-  // For parent component (department list)
-  @Output() departmentCreated = new EventEmitter<void>();
-
   departmentForm = this.fb.nonNullable.group({
     name: ['', Validators.required],
   });
@@ -39,8 +35,6 @@ export class DepartmentCreateComponent {
 
       this.departmentService.createDepartment(name).subscribe({
         next: (newDepartment) => {
-          // Notify parent component
-          this.departmentCreated.emit();
           this.departmentForm.reset();
         },
         error: (err) => {
