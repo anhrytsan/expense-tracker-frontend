@@ -9,6 +9,7 @@
 .sidenav-content {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .main-toolbar {
@@ -24,5 +25,10 @@
 .content {
   padding: 24px;
   background-color: #fafafa;
+  overflow: auto;
   height: 100%;
+
+  @media (max-width: 600px) {
+    padding: 16px;
+  }
 }

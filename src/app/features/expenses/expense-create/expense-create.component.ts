@@ -16,6 +16,8 @@ import { DepartmentService } from '../../../core/services/department.service';
 import { EmployeeService } from '../../../core/services/employee.service';
 import { ExpenseTypeService } from '../../../core/services/expense-type.service';
 import { ExpenseService } from '../../../core/services/expense.service';
+import { NotificationService } from '../../../core/services/notification.service'; // <-- Додай це
+
 
 @Component({
   selector: 'app-expense-create',
@@ -35,12 +37,13 @@ import { ExpenseService } from '../../../core/services/expense.service';
   styleUrl: './expense-create.component.scss',
 })
 export class ExpenseCreateComponent implements OnInit {
-  // Додай implements OnInit
   private fb = inject(FormBuilder);
   private departmentService = inject(DepartmentService);
   private employeeService = inject(EmployeeService);
   private expenseTypeService = inject(ExpenseTypeService);
   private expenseService = inject(ExpenseService);
+  private notificationService = inject(NotificationService); // <-- Додай це
+
 
   // Signals from services
   departments = this.departmentService.departments;
@@ -73,15 +76,12 @@ export class ExpenseCreateComponent implements OnInit {
     });
   }
 
-  // 👇 Ось цей метод ми додаємо
   ngOnInit(): void {
     this.loadFormData();
   }
 
-  // 👇 І цей теж
   loadFormData(): void {
     this.departmentService.getDepartments().subscribe({
-      // <-- Додай цей блок
       error: (err) => console.error('Помилка завантаження відділів:', err),
     });
     this.employeeService.getEmployees().subscribe({
@@ -90,7 +90,6 @@ export class ExpenseCreateComponent implements OnInit {
     this.expenseTypeService.getExpenseTypes().subscribe({
       error: (err) => console.error('Помилка завантаження типів витрат:', err),
     });
-    // Завантаження відділів тут не обов'язкове, оскільки вони завантажуються разом зі співробітниками
   }
 
   onSubmit() {
@@ -98,10 +97,13 @@ export class ExpenseCreateComponent implements OnInit {
       this.expenseService.createExpense(this.expenseForm.getRawValue()).subscribe({
         next: () => {
           console.log('Витрату успішно створено!');
+          this.notificationService.showSuccess('Витрату успішно створено!');
           this.expenseForm.reset({ date: new Date().toISOString(), amount: 0 });
         },
         error: (err) => {
+          const message = err.error.message || 'Невідома помилка';
           console.error('Помилка створення витрати:', err);
+          this.notificationService.showError(`Помилка створення витрати: ${message}`);
         },
       });
     }

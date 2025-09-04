@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { DepartmentService } from '../../../core/services/department.service';
 import { MonthlyLimitService } from '../../../core/services/monthly-limit.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-monthly-limit-form',
@@ -30,6 +31,7 @@ export class MonthlyLimitFormComponent {
   private fb = inject(FormBuilder);
   private departmentService = inject(DepartmentService);
   private monthlyLimitService = inject(MonthlyLimitService);
+  private notificationService = inject(NotificationService);
 
   departments = this.departmentService.departments;
 
@@ -50,7 +52,7 @@ export class MonthlyLimitFormComponent {
       this.monthlyLimitService.setMonthlyLimit(this.limitForm.getRawValue()).subscribe({
         next: (response) => {
           console.log('Limit succesfully set:', response);
-          alert('Limit successfully set');
+          this.notificationService.showSuccess('Ліміт успішно встановлено');
           this.limitForm.reset({
             year: new Date().getFullYear(),
             month: new Date().getMonth() + 1,
@@ -59,7 +61,7 @@ export class MonthlyLimitFormComponent {
         },
         error: (err) => {
           console.error('Error. Cannot set limit:', err);
-          alert(`Error: ${err.error.message}`);
+          this.notificationService.showError(`Помилка: ${err.error.message}`);
         }
       });
     }

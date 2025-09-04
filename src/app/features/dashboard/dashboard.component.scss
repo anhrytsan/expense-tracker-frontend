@@ -1,0 +1,40 @@
+.dashboard-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+
+  // Коли екран менший за 960px
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.summary-card .summary-info {
+  font-size: 1.1rem;
+  padding: 16px 0;
+}
+
+.department-limit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.department-name {
+  flex-basis: 150px;
+  flex-shrink: 0;
+}
+
+.progress-container {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-label {
+  font-size: 0.9em;
+  color: grey;
+  white-space: nowrap;
+}

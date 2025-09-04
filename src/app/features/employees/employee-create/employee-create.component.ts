@@ -9,6 +9,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select'; // <-- Наш новий модуль для випадаючого списку!
 import { CommonModule } from '@angular/common';
+import { NotificationService } from '../../../core/services/notification.service'; // <-- Додай це
+
 
 @Component({
   selector: 'app-employee-create',
@@ -29,6 +31,7 @@ export class EmployeeCreateComponent {
   private fb = inject(FormBuilder);
   private employeeService = inject(EmployeeService);
   private departmentService = inject(DepartmentService);
+  private notificationService = inject(NotificationService);
 
   departments = this.departmentService.departments;
 
@@ -47,11 +50,13 @@ export class EmployeeCreateComponent {
       this.employeeService.createEmployee(this.employeeForm.getRawValue()).subscribe({
         next: (newEmployee) => {
           console.log('Співробітника успішно створено:', newEmployee);
+          this.notificationService.showSuccess(`Співробітника "${newEmployee.name}" успішно створено!`);
           this.employeeCreated.emit(); // Notify parent
           this.employeeForm.reset();
         },
         error: (err) => {
           console.error('Error. Cannot create employee:', err);
+          this.notificationService.showError(`Помилка: ${err.error.message}`);
         },
       });
     }

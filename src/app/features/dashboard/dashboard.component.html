@@ -1,10 +1,82 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>Вітаємо, {{ user()?.email || 'Гість' }}!</mat-card-title>
-    <mat-card-subtitle>Це ваша головна панель.</mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
-    <p>Тут буде відображатись основна інформація про витрати.</p>
-    <p>Обери потрібний розділ у меню ліворуч.</p>
-  </mat-card-content>
-</mat-card>
+<div class="dashboard-grid">
+  <mat-card class="summary-card">
+    <mat-card-header>
+      <mat-card-title>Загальний огляд за поточний місяць</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (summary(); as data) {
+      <div class="summary-info">
+        <p>
+          Витрачено: <strong>{{ data.summary.totalSpent | number : '1.2-2' }} грн</strong>
+        </p>
+        <p>
+          Загальний ліміт:
+          <strong>{{ data.summary.totalLimit | number : '1.2-2' }} грн</strong>
+        </p>
+      </div>
+      } @else {
+      <p>Завантаження даних...</p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Ліміти по відділах</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (summary(); as data) {
+      <mat-list>
+        @for (item of data.byDepartment; track item._id) {
+        <mat-list-item>
+          <div class="department-limit">
+            <span class="department-name">{{ item.department.name }}</span>
+            <div class="progress-container">
+              <mat-progress-bar
+                mode="determinate"
+                [value]="calculateProgress(item.spentAmount, item.limitAmount)"
+              ></mat-progress-bar>
+              <span class="progress-label"
+                >{{ item.spentAmount }} / {{ item.limitAmount }} грн</span
+              >
+            </div>
+          </div>
+        </mat-list-item>
+        } @empty {
+        <p>Ліміти для відділів на цей місяць ще не встановлено.</p>
+        }
+      </mat-list>
+      } @else {
+      <p>Завантаження...</p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Останні транзакції</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (summary(); as data) {
+      <mat-list>
+        @for (expense of data.recentExpenses; track expense._id) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>receipt_long</mat-icon>
+          <div matListItemTitle>
+            <strong>{{ expense.amount }} грн</strong> - {{ expense.expenseType?.name }}
+          </div>
+          <div matListItemLine>
+            {{ expense.employee?.name }} ({{ expense.department?.name }}) -
+            {{ expense.date | date : 'dd.MM.yyyy' }}
+          </div>
+        </mat-list-item>
+        } @empty {
+        <p>Транзакцій ще не було.</p>
+        }
+      </mat-list>
+      } @else {
+      <p>Завантаження...</p>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

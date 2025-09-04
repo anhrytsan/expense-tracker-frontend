@@ -2,12 +2,14 @@ import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CreateExpenseTypeDto, ExpenseTypeService } from '../../../core/services/expense-type.service';
-import { ExpenseType } from '../../../core/services/expense.service'; 
+import { ExpenseType } from '../../../core/services/expense.service';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { NotificationService } from '../../../core/services/notification.service';
+
 
 @Component({
   selector: 'app-expense-type-form',
@@ -23,6 +25,8 @@ import { MatCardModule } from '@angular/material/card';
 export class ExpenseTypeFormComponent {
   private fb = inject(FormBuilder);
   private expenseTypeService = inject(ExpenseTypeService);
+  private notificationService = inject(NotificationService); // <-- Додай це
+
 
   // Input data: якщо передаємо існуючий тип, форма буде в режимі редагування
   @Input() expenseType?: ExpenseType;
@@ -55,13 +59,21 @@ export class ExpenseTypeFormComponent {
 
     if (this.isEditMode && this.expenseType) {
       // Updating existing type
-      this.expenseTypeService.updateExpenseType(this.expenseType._id, formData).subscribe(() => {
-        this.formClose.emit();
+      this.expenseTypeService.updateExpenseType(this.expenseType._id, formData).subscribe({
+        next: () => {
+          this.notificationService.showSuccess('Тип витрат успішно оновлено!');
+          this.formClose.emit();
+        },
+        error: (err) => this.notificationService.showError(`Помилка: ${err.error.message}`),
       });
     } else {
       // Creating new
-      this.expenseTypeService.createExpenseType(formData).subscribe(() => {
-        this.formClose.emit();
+      this.expenseTypeService.createExpenseType(formData).subscribe({
+        next: () => {
+          this.notificationService.showSuccess('Новий тип витрат створено!');
+          this.formClose.emit();
+        },
+        error: (err) => this.notificationService.showError(`Помилка: ${err.error.message}`),
       });
     }
   }
