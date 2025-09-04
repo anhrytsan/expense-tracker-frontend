@@ -11,3 +11,13 @@ table {
   text-align: center;
   color: grey;
 }
+
+th.mat-column-actions,
+td.mat-column-actions {
+  text-align: right;
+  width: 120px;
+}
+
+.edit-input {
+  width: 90%;
+}

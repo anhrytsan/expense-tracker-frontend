@@ -36,4 +36,16 @@ export class DepartmentService {
       tap(() => this.getDepartments().subscribe())
     );
   }
+
+  updateDepartment(id: string, name: string) {
+    return this.http.patch<Department>(`${this.apiUrl}/${id}`, { name }).pipe(
+      tap(() => this.getDepartments().subscribe())
+    );
+  }
+
+  deleteDepartment(id: string) {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => this.getDepartments().subscribe())
+    );
+  }
 }
