@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Expense, ExpenseService } from '../../../core/services/expense.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';

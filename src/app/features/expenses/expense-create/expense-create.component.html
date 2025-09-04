@@ -1,3 +1,4 @@
+@if (employees().length && expenseTypes().length && departments().length) {
 <mat-card>
   <mat-card-header>
     <mat-card-title>Додати нову витрату</mat-card-title>
@@ -49,3 +50,10 @@
     </form>
   </mat-card-content>
 </mat-card>
+} @else {
+<mat-card>
+  <mat-card-content style="text-align: center; padding: 20px">
+    <p>Завантаження даних для форми...</p>
+  </mat-card-content>
+</mat-card>
+}

@@ -4,7 +4,6 @@ import { Department } from './department.service';
 import { Employee } from './employee.service';
 import { tap } from 'rxjs';
 
-
 export interface ExpenseType {
   _id: string;
   name: string;
@@ -16,9 +15,9 @@ export interface Expense {
   _id: string;
   amount: number;
   date: string;
-  expenseType: ExpenseType;
-  employee: Employee;
-  department: Department;
+  expenseType: ExpenseType | null;
+  employee: Employee | null;
+  department: Department | null;
 }
 
 // Interface for creating new expense (DTO - Data Transfer Object)
@@ -27,12 +26,12 @@ export interface CreateExpenseDto {
   amount: number;
   date: string;
   expenseType: string; // ID
-  employee: string;    // ID
-  department: string;  // ID
+  employee: string; // ID
+  department: string; // ID
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ExpenseService {
   private http = inject(HttpClient);
@@ -42,9 +41,9 @@ export class ExpenseService {
   public readonly expenses = this.expensesPrivate.asReadonly();
 
   getExpenses() {
-    return this.http.get<Expense[]>(this.apiUrl).pipe(
-      tap(data => this.expensesPrivate.set(data))
-    );
+    return this.http
+      .get<Expense[]>(this.apiUrl)
+      .pipe(tap((data) => this.expensesPrivate.set(data)));
   }
 
   createExpense(expenseData: CreateExpenseDto) {

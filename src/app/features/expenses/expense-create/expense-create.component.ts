@@ -1,9 +1,8 @@
-import { Component, effect, computed, inject, signal } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core'; // Додай OnInit
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-// Angular Material Modules
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,6 +19,7 @@ import { ExpenseService } from '../../../core/services/expense.service';
 
 @Component({
   selector: 'app-expense-create',
+  standalone: true, // standalone: true вже є, тому не міняємо
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -34,7 +34,8 @@ import { ExpenseService } from '../../../core/services/expense.service';
   templateUrl: './expense-create.component.html',
   styleUrl: './expense-create.component.scss',
 })
-export class ExpenseCreateComponent {
+export class ExpenseCreateComponent implements OnInit {
+  // Додай implements OnInit
   private fb = inject(FormBuilder);
   private departmentService = inject(DepartmentService);
   private employeeService = inject(EmployeeService);
@@ -55,16 +56,13 @@ export class ExpenseCreateComponent {
   });
 
   // LOGIC FOR AUTOSELECTING DEPARTMENT BY EMPLOYEE IN FORM
-  // Created signal from changes in 'employee field'
   selectedEmployeeId = toSignal(this.expenseForm.controls.employee.valueChanges);
-  // Now effect can listen both signals: this.employees() and selectedEmployeeId()
 
   constructor() {
     effect(() => {
       const employeeId = this.selectedEmployeeId();
       const employeeList = this.employees();
 
-      // Work only if both signals have values
       if (employeeId && employeeList.length > 0) {
         const selectedEmployee = employeeList.find((emp) => emp._id === employeeId);
 
@@ -75,11 +73,24 @@ export class ExpenseCreateComponent {
     });
   }
 
+  // 👇 Ось цей метод ми додаємо
   ngOnInit(): void {
-    // Load initial data for dropdowns
-    this.departmentService.getDepartments().subscribe();
-    this.employeeService.getEmployees().subscribe();
-    this.expenseTypeService.getExpenseTypes().subscribe();
+    this.loadFormData();
+  }
+
+  // 👇 І цей теж
+  loadFormData(): void {
+    this.departmentService.getDepartments().subscribe({
+      // <-- Додай цей блок
+      error: (err) => console.error('Помилка завантаження відділів:', err),
+    });
+    this.employeeService.getEmployees().subscribe({
+      error: (err) => console.error('Помилка завантаження співробітників:', err),
+    });
+    this.expenseTypeService.getExpenseTypes().subscribe({
+      error: (err) => console.error('Помилка завантаження типів витрат:', err),
+    });
+    // Завантаження відділів тут не обов'язкове, оскільки вони завантажуються разом зі співробітниками
   }
 
   onSubmit() {

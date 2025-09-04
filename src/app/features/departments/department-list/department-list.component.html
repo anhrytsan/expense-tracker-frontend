@@ -1,18 +1,36 @@
 <app-department-create></app-department-create>
 
-<mat-card>
+<mat-card class="table-card">
   <mat-card-header>
     <mat-card-title>Список відділів</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <mat-list role="list">
-      @for (dep of departments(); track dep._id) {
-        <mat-list-item role="listitem">
-          {{ dep.name }} (Співробітників: {{ dep.numberOfEmployees }})
-        </mat-list-item>
-      } @empty {
-        <mat-list-item>Відділів поки що немає.</mat-list-item>
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="departments()">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Назва відділу</th>
+          <td mat-cell *matCellDef="let department">{{ department.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="numberOfEmployees">
+          <th mat-header-cell *matHeaderCellDef>К-сть співробітників</th>
+          <td mat-cell *matCellDef="let department">{{ department.numberOfEmployees }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef>Створено</th>
+          <td mat-cell *matCellDef="let department">{{ department.createdAt | date: 'dd.MM.yyyy' }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+      @if (!departments().length) {
+        <div class="empty-table-message">
+          <p>Відділів поки що немає.</p>
+        </div>
       }
-    </mat-list>
+    </div>
   </mat-card-content>
 </mat-card>

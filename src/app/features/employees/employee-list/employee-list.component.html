@@ -1,18 +1,36 @@
-<app-employee-create (employeeCreated)="loadEmployees()"></app-employee-create>
+<app-employee-create></app-employee-create>
 
-<mat-card>
+<mat-card class="table-card">
   <mat-card-header>
     <mat-card-title>Список співробітників</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <mat-list role="list">
-      @for (emp of employees(); track emp._id) {
-      <mat-list-item role="listitem">
-        {{ emp.name }} - {{ emp.position }} (Відділ: {{ emp.department.name }})
-      </mat-list-item>
-      } @empty {
-      <mat-list-item>Співробітників поки що немає.</mat-list-item>
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="employees()">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Ім'я співробітника</th>
+          <td mat-cell *matCellDef="let employee">{{ employee.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef>Посада</th>
+          <td mat-cell *matCellDef="let employee">{{ employee.position }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="department">
+          <th mat-header-cell *matHeaderCellDef>Відділ</th>
+          <td mat-cell *matCellDef="let employee">{{ employee.department.name }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+      @if (!employees().length) {
+      <div class="empty-table-message">
+        <p>Співробітників поки що немає.</p>
+      </div>
       }
-    </mat-list>
+    </div>
   </mat-card-content>
 </mat-card>

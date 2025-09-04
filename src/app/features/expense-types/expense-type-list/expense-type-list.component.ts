@@ -5,7 +5,7 @@ import { ExpenseType } from '../../../core/services/expense.service';
 
 import { ExpenseTypeFormComponent } from '../expense-type-form/expense-type-form.component';
 
-import { MatListModule } from '@angular/material/list';
+import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
   selector: 'app-expense-type-list',
   imports: [
     CommonModule,
-    MatListModule,
+    MatTableModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -31,6 +31,8 @@ export class ExpenseTypeListComponent {
   // Signals for state management
   showForm = signal(false);
   selectedExpenseType = signal<ExpenseType | undefined>(undefined);
+
+  displayedColumns: string[] = ['name', 'limit', 'actions'];
 
   ngOnInit(): void {
     this.expenseTypeService.getExpenseTypes().subscribe();

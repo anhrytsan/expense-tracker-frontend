@@ -9,7 +9,7 @@
       @for (exp of expenses(); track exp._id) {
       <mat-list-item role="listitem">
         {{ exp.date | date : 'dd.MM.yyyy' }} - <strong>{{ exp.amount }} грн</strong> -
-        {{ exp.expenseType.name }} ({{ exp.employee.name }} / {{ exp.department.name }})
+        {{ exp.expenseType?.name }} ({{ exp.employee?.name }} / {{ exp.department?.name }})
       </mat-list-item>
       } @empty {
       <mat-list-item>Витрат поки що немає.</mat-list-item>

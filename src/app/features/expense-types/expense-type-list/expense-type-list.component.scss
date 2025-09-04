@@ -1,3 +1,7 @@
+.table-card {
+  margin-top: 20px;
+}
+
 mat-card-header {
   display: flex;
   justify-content: space-between;
@@ -9,12 +13,18 @@ mat-card-header {
   flex: 1 1 auto;
 }
 
-mat-list-item {
-  display: flex;
-  align-items: center;
+table {
   width: 100%;
 }
 
-.type-name {
-  flex-grow: 1;
+.empty-table-message {
+  padding: 20px;
+  text-align: center;
+  color: grey;
+}
+
+th.mat-column-actions,
+td.mat-column-actions {
+  text-align: right;
+  justify-content: flex-end;
 }
