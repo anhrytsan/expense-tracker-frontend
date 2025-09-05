@@ -1,4 +1,4 @@
-import { Component, OnInit, effect, inject } from '@angular/core';
+import { Component, OnInit, effect, inject, signal } from '@angular/core';
 import { filter } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
@@ -25,6 +25,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 
 @Component({
@@ -41,7 +42,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatInputModule,
     MatFormFieldModule,
     MatSelectModule,
-    EmployeeCreateComponent
+    EmployeeCreateComponent,
+    MatPaginatorModule,
   ],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.scss',
@@ -54,8 +56,12 @@ export class EmployeeListComponent implements OnInit {
   private dialog = inject(MatDialog); // Інжектуємо сервіс діалогів
 
   employees = this.employeeService.employees;
+  totalEmployees = this.employeeService.totalEmployees;
   departments = this.departmentService.departments;
   positions = this.employeeService.positions;
+
+  pageSize = signal(10);
+  pageIndex = signal(0);
 
   displayedColumns: string[] = ['name', 'position', 'department', 'actions'];
 
@@ -75,7 +81,8 @@ export class EmployeeListComponent implements OnInit {
     effect(() => {
       const filters = this.filtersSignal();
       if (filters) {
-        this.loadEmployees(filters);
+        this.pageIndex.set(0);
+        this.loadEmployees();
       }
     });
   }
@@ -84,11 +91,19 @@ export class EmployeeListComponent implements OnInit {
     this.loadFilterData();
   }
 
-  loadEmployees(filters: any = {}): void {
+  loadEmployees(): void {
+    const filters = this.filterForm.value;
     const cleanFilters = Object.fromEntries(
       Object.entries(filters).filter(([_, v]) => v != null && v !== '')
     );
-    this.employeeService.getEmployees(cleanFilters).subscribe();
+
+    const params = {
+      ...cleanFilters,
+      page: this.pageIndex() + 1,
+      limit: this.pageSize(),
+    };
+
+    this.employeeService.getEmployees(params).subscribe();
   }
 
   loadFilterData(): void {
@@ -98,6 +113,12 @@ export class EmployeeListComponent implements OnInit {
 
   clearFilters(): void {
     this.filterForm.reset({ department: '', position: '' });
+  }
+
+  handlePageEvent(event: PageEvent) {
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
+    this.loadEmployees();
   }
 
   onEdit(employee: Employee): void {

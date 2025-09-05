@@ -116,6 +116,14 @@
         <p>Співробітників поки що немає (або не знайдено за вашими фільтрами).</p>
       </div>
       }
+      <mat-paginator
+        (page)="handlePageEvent($event)"
+        [length]="totalEmployees()"
+        [pageSize]="pageSize()"
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        [pageIndex]="pageIndex()"
+        aria-label="Select page">
+      </mat-paginator>
     </div>
   </mat-card-content>
 </mat-card>

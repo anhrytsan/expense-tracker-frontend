@@ -25,6 +25,12 @@ export interface UpdateEmployeeDto {
   department?: string;
 }
 
+export interface PaginatedEmployees {
+  docs: Employee[];
+  totalDocs: number;
+  totalPages: number;
+  currentPage: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -36,14 +42,20 @@ export class EmployeeService {
   private employeesPrivate = signal<Employee[]>([]);
   public readonly employees = this.employeesPrivate.asReadonly();
 
+  private totalEmployeesPrivate = signal(0);
+  public readonly totalEmployees = this.totalEmployeesPrivate.asReadonly();
+
   private positionsPrivate = signal<string[]>([]);
   public readonly positions = this.positionsPrivate.asReadonly();
 
   getEmployees(filters: any = {}) {
     const params = new HttpParams({ fromObject: filters });
 
-    return this.http.get<Employee[]>(this.apiUrl, { params }).pipe(
-      tap(data => this.employeesPrivate.set(data))
+    return this.http.get<PaginatedEmployees>(this.apiUrl, { params }).pipe(
+      tap(data => {
+        this.employeesPrivate.set(data.docs)
+        this.totalEmployeesPrivate.set(data.totalDocs);
+      })
     );
   }
 
