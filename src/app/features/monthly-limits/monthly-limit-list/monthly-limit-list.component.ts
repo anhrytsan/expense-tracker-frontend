@@ -1,7 +1,8 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MonthlyLimit, MonthlyLimitService } from '../../../core/services/monthly-limit.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { DepartmentService } from '../../../core/services/department.service';
 
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
@@ -14,7 +15,6 @@ import { MonthlyLimitFormComponent } from '../monthly-limit-form/monthly-limit-f
   standalone: true,
   imports: [
     CommonModule,
-    DatePipe,
     MatTableModule,
     MatCardModule,
     MatButtonModule,
@@ -24,18 +24,47 @@ import { MonthlyLimitFormComponent } from '../monthly-limit-form/monthly-limit-f
   templateUrl: './monthly-limit-list.component.html',
   styleUrl: './monthly-limit-list.component.scss',
 })
-export class MonthlyLimitListComponent {
+export class MonthlyLimitListComponent implements OnInit {
   private monthlyLimitService = inject(MonthlyLimitService);
   private notificationService = inject(NotificationService);
+  private departmentService = inject(DepartmentService);
 
-  limits = this.monthlyLimitService.limits;
+  // Original signals from services
+  private limits = this.monthlyLimitService.limits;
+  private departments = this.departmentService.departments;
+
+  // State for form visibility
   showForm = signal(false);
   selectedLimit = signal<MonthlyLimit | undefined>(undefined);
 
-  displayedColumns: string[] = ['department', 'period', 'limitAmount', 'spentAmount', 'actions'];
+  // Computed signal to merge data from limits and departments
+  limitsWithData = computed(() => {
+    const limits = this.limits();
+    const departments = this.departments();
+
+    // If departments data is not loaded yet, return empty array
+    if (!departments.length) {
+      return [];
+    }
+
+    return limits.map(limit => {
+      // Find the corresponding department for the current limit
+      const departmentData = departments.find(d => d._id === limit.department?._id);
+      return {
+        ...limit,
+        carryover: departmentData?.carryover,
+        effectiveLimit: departmentData?.effectiveLimit,
+        available: departmentData?.available
+      };
+    });
+  });
+
+  displayedColumns: string[] = ['department', 'period', 'limitAmount', 'carryover', 'effectiveLimit', 'spentAmount', 'available', 'actions'];
 
   ngOnInit(): void {
+    // Load both limits and full department data
     this.monthlyLimitService.getMonthlyLimits().subscribe();
+    this.departmentService.getDepartments().subscribe();
   }
 
   onAddNew() {

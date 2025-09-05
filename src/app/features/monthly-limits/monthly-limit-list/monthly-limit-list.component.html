@@ -15,8 +15,15 @@
       </button>
     </mat-card-header>
     <mat-card-content>
+       <div class="definition-box">
+        <p>
+          <strong>*Ефективний ліміт</strong> — це загальна сума, доступна відділу на поточний місяць. Вона розраховується як:
+          <em>(Ліміт на поточний місяць) + (Усі невитрачені кошти з попередніх місяців)</em>.
+        </p>
+      </div>
+
       <div class="mat-elevation-z8">
-        <table mat-table [dataSource]="limits()">
+        <table mat-table [dataSource]="limitsWithData()">
 
           <ng-container matColumnDef="department">
             <th mat-header-cell *matHeaderCellDef>Відділ</th>
@@ -29,13 +36,28 @@
           </ng-container>
 
           <ng-container matColumnDef="limitAmount">
-            <th mat-header-cell *matHeaderCellDef>Ліміт</th>
+            <th mat-header-cell *matHeaderCellDef>Ліміт (поточний місяць)</th>
             <td mat-cell *matCellDef="let limit">{{ limit.limitAmount | number }} грн</td>
+          </ng-container>
+
+          <ng-container matColumnDef="carryover">
+            <th mat-header-cell *matHeaderCellDef>Залишок з минулих місяців</th>
+            <td mat-cell *matCellDef="let limit">{{ limit.carryover | number }} грн</td>
+          </ng-container>
+
+          <ng-container matColumnDef="effectiveLimit">
+            <th mat-header-cell *matHeaderCellDef>Ефективний ліміт*</th>
+            <td mat-cell *matCellDef="let limit">{{ limit.effectiveLimit | number }} грн</td>
           </ng-container>
 
           <ng-container matColumnDef="spentAmount">
             <th mat-header-cell *matHeaderCellDef>Витрачено</th>
             <td mat-cell *matCellDef="let limit">{{ limit.spentAmount | number }} грн</td>
+          </ng-container>
+
+          <ng-container matColumnDef="available">
+            <th mat-header-cell *matHeaderCellDef>Доступно</th>
+            <td mat-cell *matCellDef="let limit">{{ limit.available | number }} грн</td>
           </ng-container>
 
           <ng-container matColumnDef="actions">
@@ -54,7 +76,7 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
 
-        @if (!limits().length) {
+        @if (!limitsWithData().length) {
           <div class="empty-table-message">
             <p>Ще не встановлено жодного ліміту.</p>
           </div>
