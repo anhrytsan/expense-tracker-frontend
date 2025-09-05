@@ -18,6 +18,14 @@ export interface CreateEmployeeDto {
   department: string; // We send only department ID when creating
 }
 
+// --- NEW --- Interface for updating
+export interface UpdateEmployeeDto {
+  name?: string;
+  position?: string;
+  department?: string;
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -39,6 +47,20 @@ export class EmployeeService {
 
   createEmployee(employeeData: CreateEmployeeDto) {
     return this.http.post<Employee>(this.apiUrl, employeeData).pipe(
+      tap(() => this.getEmployees().subscribe())
+    );
+  }
+
+  // --- NEW METHOD ---
+  updateEmployee(id: string, employeeData: UpdateEmployeeDto) {
+    return this.http.patch<Employee>(`${this.apiUrl}/${id}`, employeeData).pipe(
+      tap(() => this.getEmployees().subscribe())
+    );
+  }
+
+  // --- NEW METHOD ---
+  deleteEmployee(id: string) {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => this.getEmployees().subscribe())
     );
   }
