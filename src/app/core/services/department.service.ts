@@ -9,6 +9,8 @@ export interface Department {
   numberOfEmployees: number;
   createdAt: string;
   updatedAt: string;
+  limitAmount?: number;
+  spentAmount?: number;
 }
 
 @Injectable({
