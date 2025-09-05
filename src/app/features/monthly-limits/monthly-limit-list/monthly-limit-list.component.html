@@ -1,0 +1,65 @@
+@if (showForm()) {
+  <app-monthly-limit-form
+    [limit]="selectedLimit()"
+    (formClose)="onFormClose()">
+  </app-monthly-limit-form>
+}
+
+@if (!showForm()) {
+  <mat-card class="table-card">
+    <mat-card-header>
+      <mat-card-title>Управління лімітами</mat-card-title>
+      <span class="spacer"></span>
+      <button mat-fab color="primary" (click)="onAddNew()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="limits()">
+
+          <ng-container matColumnDef="department">
+            <th mat-header-cell *matHeaderCellDef>Відділ</th>
+            <td mat-cell *matCellDef="let limit">{{ limit.department?.name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="period">
+            <th mat-header-cell *matHeaderCellDef>Період</th>
+            <td mat-cell *matCellDef="let limit">{{ limit.month }}/{{ limit.year }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="limitAmount">
+            <th mat-header-cell *matHeaderCellDef>Ліміт</th>
+            <td mat-cell *matCellDef="let limit">{{ limit.limitAmount | number }} грн</td>
+          </ng-container>
+
+          <ng-container matColumnDef="spentAmount">
+            <th mat-header-cell *matHeaderCellDef>Витрачено</th>
+            <td mat-cell *matCellDef="let limit">{{ limit.spentAmount | number }} грн</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Дії</th>
+            <td mat-cell *matCellDef="let limit">
+              <button mat-icon-button color="accent" (click)="onEdit(limit)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="onDelete(limit)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+
+        @if (!limits().length) {
+          <div class="empty-table-message">
+            <p>Ще не встановлено жодного ліміту.</p>
+          </div>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+}

@@ -1,9 +1,10 @@
 <mat-card>
   <mat-card-header>
-    <mat-card-title>Встановити місячний ліміт</mat-card-title>
+    <mat-card-title>{{ isEditMode ? 'Редагувати' : 'Встановити' }} місячний ліміт</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <form [formGroup]="limitForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="limitForm" (ngSubmit)="onSubmit()" style="display: flex; flex-direction: column; gap: 10px;">
+
       <mat-form-field appearance="outline">
         <mat-label>Відділ</mat-label>
         <mat-select formControlName="department">
@@ -15,22 +16,26 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Рік</mat-label>
-        <input matInput type="number" formControlName="year" placeholder="2025" />
+        <input matInput type="number" formControlName="year" placeholder="2025">
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Місяць (1-12)</mat-label>
-        <input matInput type="number" formControlName="month" placeholder="9" />
+        <mat-label>Місяць</mat-label>
+        <input matInput type="number" formControlName="month" placeholder="1-12">
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Сума ліміту</mat-label>
-        <input matInput type="number" formControlName="limitAmount" placeholder="5000" />
+        <input matInput type="number" formControlName="limitAmount" placeholder="5000">
+        <span matTextSuffix>грн</span>
       </mat-form-field>
 
-      <button mat-raised-button color="primary" type="submit" [disabled]="limitForm.invalid">
-        Встановити
-      </button>
+      <div class="form-actions" style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+        <button mat-stroked-button type="button" (click)="cancel()">Скасувати</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="limitForm.invalid">
+          {{ isEditMode ? 'Зберегти' : 'Встановити' }}
+        </button>
+      </div>
     </form>
   </mat-card-content>
 </mat-card>
