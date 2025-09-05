@@ -24,3 +24,19 @@ mat-form-field {
 button {
   align-self: flex-end;
 }
+
+.navigation-link {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.9em;
+
+  a {
+    color: var(--mat-sys-primary);
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

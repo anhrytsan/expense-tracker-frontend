@@ -1,0 +1,48 @@
+<div class="login-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Реєстрація</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" placeholder="test@example.com" type="email">
+          <mat-icon matSuffix>email</mat-icon>
+          @if (registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')) {
+            <mat-error>Email є обов'язковим</mat-error>
+          }
+          @if (registerForm.get('email')?.hasError('email')) {
+            <mat-error>Некоректний формат email</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Пароль</mat-label>
+          <input matInput formControlName="password" placeholder="Введіть пароль" type="password">
+          <mat-icon matSuffix>lock</mat-icon>
+           @if (registerForm.get('password')?.touched && registerForm.get('password')?.hasError('required')) {
+            <mat-error>Пароль є обов'язковим</mat-error>
+          }
+        </mat-form-field>
+
+         <mat-form-field appearance="outline">
+          <mat-label>Підтвердіть пароль</mat-label>
+          <input matInput formControlName="confirmPassword" placeholder="Повторіть пароль" type="password">
+          <mat-icon matSuffix>lock_reset</mat-icon>
+           @if (registerForm.get('confirmPassword')?.touched && registerForm.hasError('passwordsNotMatch')) {
+            <mat-error>Паролі не співпадають</mat-error>
+          }
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid">
+          Зареєструватися
+        </button>
+      </form>
+       <div class="navigation-link">
+        <span>Вже є акаунт? </span>
+        <a routerLink="/login">Увійти</a>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
