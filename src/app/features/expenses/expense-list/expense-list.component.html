@@ -1,5 +1,52 @@
 <app-expense-create></app-expense-create>
 
+<mat-card class="filters-card">
+  <mat-card-header>
+    <mat-card-title>Фільтри</mat-card-title>
+  </mat-card-header>
+  <mat-card-content [formGroup]="filterForm">
+    <div class="filter-controls">
+      <mat-form-field appearance="outline">
+        <mat-label>Відділ</mat-label>
+        <mat-select formControlName="department">
+          <mat-option value="">Всі відділи</mat-option>
+          @for (dep of departments(); track dep._id) {
+            <mat-option [value]="dep._id">{{ dep.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Тип витрати</mat-label>
+        <mat-select formControlName="expenseType">
+          <mat-option value="">Всі типи</mat-option>
+          @for (type of expenseTypes(); track type._id) {
+            <mat-option [value]="type._id">{{ type.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Співробітник</mat-label>
+        <mat-select formControlName="employee">
+          <mat-option value="">Всі співробітники</mat-option>
+          @for (emp of employees(); track emp._id) {
+            <mat-option [value]="emp._id">{{ emp.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Посада (пошук)</mat-label>
+        <input matInput formControlName="position" placeholder="Напр., менеджер">
+      </mat-form-field>
+    </div>
+    <div class="filter-actions">
+      <button mat-stroked-button (click)="clearFilters()">Очистити фільтри</button>
+    </div>
+  </mat-card-content>
+</mat-card>
+
 <mat-card class="table-card">
   <mat-card-header>
     <mat-card-title>Список витрат</mat-card-title>
@@ -7,6 +54,7 @@
   <mat-card-content>
     <div class="mat-elevation-z8">
       <table mat-table [dataSource]="expenses()">
+
         <ng-container matColumnDef="date">
           <th mat-header-cell *matHeaderCellDef>Дата</th>
           <td mat-cell *matCellDef="let exp">{{ exp.date | date : 'dd.MM.yyyy' }}</td>
@@ -27,6 +75,11 @@
           <td mat-cell *matCellDef="let exp">{{ exp.employee?.name }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef>Посада</th>
+          <td mat-cell *matCellDef="let exp">{{ exp.employee?.position }}</td>
+        </ng-container>
+
         <ng-container matColumnDef="department">
           <th mat-header-cell *matHeaderCellDef>Відділ</th>
           <td mat-cell *matCellDef="let exp">{{ exp.department?.name }}</td>
@@ -38,7 +91,7 @@
 
       @if (!expenses().length) {
       <div class="empty-table-message">
-        <p>Витрат поки що немає.</p>
+        <p>Витрат поки що немає (або не знайдено за вашими фільтрами).</p>
       </div>
       }
     </div>

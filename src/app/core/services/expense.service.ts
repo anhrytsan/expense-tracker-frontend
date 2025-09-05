@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Department } from './department.service';
 import { Employee } from './employee.service';
@@ -40,9 +40,11 @@ export class ExpenseService {
   private expensesPrivate = signal<Expense[]>([]);
   public readonly expenses = this.expensesPrivate.asReadonly();
 
-  getExpenses() {
+  getExpenses(filters: any = {}) {
+    const params = new HttpParams({ fromObject: filters });
+
     return this.http
-      .get<Expense[]>(this.apiUrl)
+      .get<Expense[]>(this.apiUrl, { params })
       .pipe(tap((data) => this.expensesPrivate.set(data)));
   }
 
