@@ -33,7 +33,7 @@
               <button mat-icon-button color="accent" (click)="onEdit(type)">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-icon-button color="warn" (click)="deleteExpenseType(type._id)">
+              <button mat-icon-button color="warn" (click)="deleteExpenseType(type._id, type.name)">
                 <mat-icon>delete</mat-icon>
               </button>
             </td>

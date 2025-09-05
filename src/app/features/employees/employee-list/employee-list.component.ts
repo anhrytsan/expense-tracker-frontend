@@ -1,4 +1,9 @@
 import { Component, OnInit, effect, inject } from '@angular/core';
+import { filter } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+
+// ... інші імпорти (CommonModule, FormsModule, ReactiveFormsModule і т.д.)
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -20,6 +25,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+
 
 @Component({
   selector: 'app-employee-list',
@@ -45,6 +51,7 @@ export class EmployeeListComponent implements OnInit {
   private employeeService = inject(EmployeeService);
   private departmentService = inject(DepartmentService);
   private notificationService = inject(NotificationService);
+  private dialog = inject(MatDialog); // Інжектуємо сервіс діалогів
 
   employees = this.employeeService.employees;
   departments = this.departmentService.departments;
@@ -52,25 +59,16 @@ export class EmployeeListComponent implements OnInit {
 
   displayedColumns: string[] = ['name', 'position', 'department', 'actions'];
 
-  // --- NEW: State management for editing ---
   editingEmployeeId: string | null = null;
-  editForm = {
-    name: '',
-    position: '',
-    department: ''
-  };
+  editForm = { name: '', position: '', department: '' };
 
-  // --- NEW: Filter form ---
   filterForm = this.fb.group({
     department: [''],
     position: [''],
   });
 
   private filtersSignal = toSignal(
-    this.filterForm.valueChanges.pipe(
-      startWith(this.filterForm.value),
-      debounceTime(400)
-    )
+    this.filterForm.valueChanges.pipe(startWith(this.filterForm.value), debounceTime(400))
   );
 
   constructor() {
@@ -101,8 +99,6 @@ export class EmployeeListComponent implements OnInit {
   clearFilters(): void {
     this.filterForm.reset({ department: '', position: '' });
   }
-
-  // --- NEW METHODS ---
 
   onEdit(employee: Employee): void {
     this.editingEmployeeId = employee._id;
@@ -142,15 +138,24 @@ export class EmployeeListComponent implements OnInit {
   }
 
   onDelete(employee: Employee): void {
-    if (confirm(`Ви впевнені, що хочете видалити співробітника "${employee.name}"?`)) {
-      this.employeeService.deleteEmployee(employee._id).subscribe({
-        next: () => {
-          this.notificationService.showSuccess(`Співробітника "${employee.name}" видалено.`);
-        },
-        error: (err) => {
-          this.notificationService.showError(`Помилка: ${err.error.message}`);
-        },
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Підтвердження видалення',
+        message: `Ви впевнені, що хочете видалити співробітника "${employee.name}"?`,
+      },
+    });
+
+    dialogRef.afterClosed()
+      .pipe(filter(result => result === true))
+      .subscribe(() => {
+        this.employeeService.deleteEmployee(employee._id).subscribe({
+          next: () => {
+            this.notificationService.showSuccess(`Співробітника "${employee.name}" видалено.`);
+          },
+          error: (err) => {
+            this.notificationService.showError(`Помилка: ${err.error.message}`);
+          },
+        });
       });
-    }
   }
 }

@@ -1,7 +1,11 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { filter } from 'rxjs';
 import { Department, DepartmentService } from '../../../core/services/department.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
+// ... інші імпорти
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { DepartmentCreateComponent } from '../department-create/department-create.component';
@@ -31,22 +35,15 @@ import { FormsModule } from '@angular/forms';
 export class DepartmentListComponent implements OnInit {
   private departmentService = inject(DepartmentService);
   private notificationService = inject(NotificationService);
+  private dialog = inject(MatDialog);
 
   departments = this.departmentService.departments;
 
-  // Array with the names of the columns we want to display
   displayedColumns: string[] = ['name', 'numberOfEmployees', 'limit', 'carryover', 'effectiveLimit', 'spent', 'available', 'createdAt', 'actions'];
-  // Editing management
   editingDepartmentId: string | null = null;
   editedDepartmentName: string = '';
 
-  // Request departments initial data after component created
   ngOnInit(): void {
-    // Ask service to load data on init.
-    this.departmentService.getDepartments().subscribe();
-  }
-
-  loadDepartments(): void {
     this.departmentService.getDepartments().subscribe();
   }
 
@@ -86,15 +83,24 @@ export class DepartmentListComponent implements OnInit {
   }
 
   onDelete(id: string, name: string): void {
-    if (confirm(`Ви впевнені, що хочете видалити відділ "${name}"?`)) {
-      this.departmentService.deleteDepartment(id).subscribe({
-        next: () => {
-          this.notificationService.showSuccess(`Відділ "${name}" видалено.`);
-        },
-        error: (err) => {
-          this.notificationService.showError(`Помилка: ${err.error.message}`);
-        },
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Підтвердження видалення',
+        message: `Ви впевнені, що хочете видалити відділ "${name}"?`,
+      },
+    });
+
+    dialogRef.afterClosed()
+      .pipe(filter(result => result === true)) // Виконуємо дію тільки якщо натиснули "Так"
+      .subscribe(() => {
+        this.departmentService.deleteDepartment(id).subscribe({
+          next: () => {
+            this.notificationService.showSuccess(`Відділ "${name}" видалено.`);
+          },
+          error: (err) => {
+            this.notificationService.showError(`Помилка: ${err.error.message}`);
+          },
+        });
       });
-    }
   }
 }
