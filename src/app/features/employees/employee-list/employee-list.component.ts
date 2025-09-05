@@ -1,6 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime, startWith } from 'rxjs';
 
 // Services
 import { Employee, EmployeeService, UpdateEmployeeDto } from '../../../core/services/employee.service';
@@ -39,12 +41,14 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrl: './employee-list.component.scss',
 })
 export class EmployeeListComponent implements OnInit {
+  private fb = inject(FormBuilder);
   private employeeService = inject(EmployeeService);
   private departmentService = inject(DepartmentService);
   private notificationService = inject(NotificationService);
 
   employees = this.employeeService.employees;
   departments = this.departmentService.departments;
+  positions = this.employeeService.positions;
 
   displayedColumns: string[] = ['name', 'position', 'department', 'actions'];
 
@@ -56,9 +60,46 @@ export class EmployeeListComponent implements OnInit {
     department: ''
   };
 
+  // --- NEW: Filter form ---
+  filterForm = this.fb.group({
+    department: [''],
+    position: [''],
+  });
+
+  private filtersSignal = toSignal(
+    this.filterForm.valueChanges.pipe(
+      startWith(this.filterForm.value),
+      debounceTime(400)
+    )
+  );
+
+  constructor() {
+    effect(() => {
+      const filters = this.filtersSignal();
+      if (filters) {
+        this.loadEmployees(filters);
+      }
+    });
+  }
+
   ngOnInit(): void {
-    this.employeeService.getEmployees().subscribe();
+    this.loadFilterData();
+  }
+
+  loadEmployees(filters: any = {}): void {
+    const cleanFilters = Object.fromEntries(
+      Object.entries(filters).filter(([_, v]) => v != null && v !== '')
+    );
+    this.employeeService.getEmployees(cleanFilters).subscribe();
+  }
+
+  loadFilterData(): void {
     this.departmentService.getDepartments().subscribe();
+    this.employeeService.getPositions().subscribe();
+  }
+
+  clearFilters(): void {
+    this.filterForm.reset({ department: '', position: '' });
   }
 
   // --- NEW METHODS ---

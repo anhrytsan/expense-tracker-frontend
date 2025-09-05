@@ -1,5 +1,37 @@
 <app-employee-create></app-employee-create>
 
+<mat-card class="filters-card">
+  <mat-card-header>
+    <mat-card-title>Фільтри</mat-card-title>
+  </mat-card-header>
+  <mat-card-content [formGroup]="filterForm">
+    <div class="filter-controls">
+      <mat-form-field appearance="outline">
+        <mat-label>Відділ</mat-label>
+        <mat-select formControlName="department">
+          <mat-option value="">Всі відділи</mat-option>
+          @for (dep of departments(); track dep._id) {
+          <mat-option [value]="dep._id">{{ dep.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Посада</mat-label>
+        <mat-select formControlName="position">
+          <mat-option value="">Всі посади</mat-option>
+          @for (pos of positions(); track pos) {
+          <mat-option [value]="pos">{{ pos }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="filter-actions">
+      <button mat-stroked-button (click)="clearFilters()">Очистити фільтри</button>
+    </div>
+  </mat-card-content>
+</mat-card>
+
 <mat-card class="table-card">
   <mat-card-header>
     <mat-card-title>Список співробітників</mat-card-title>
@@ -81,7 +113,7 @@
 
       @if (!employees().length) {
       <div class="empty-table-message">
-        <p>Співробітників поки що немає.</p>
+        <p>Співробітників поки що немає (або не знайдено за вашими фільтрами).</p>
       </div>
       }
     </div>

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Department } from './department.service';
 import { tap } from 'rxjs';
@@ -39,8 +39,10 @@ export class EmployeeService {
   private positionsPrivate = signal<string[]>([]);
   public readonly positions = this.positionsPrivate.asReadonly();
 
-  getEmployees() {
-    return this.http.get<Employee[]>(this.apiUrl).pipe(
+  getEmployees(filters: any = {}) {
+    const params = new HttpParams({ fromObject: filters });
+
+    return this.http.get<Employee[]>(this.apiUrl, { params }).pipe(
       tap(data => this.employeesPrivate.set(data))
     );
   }
