@@ -1,23 +1,13 @@
-.table-card {
-  margin-top: 20px;
-}
+.definition-box {
+  background-color: #eef4f8;
+  border-left: 4px solid #2196f3;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border-radius: 4px;
 
-table {
-  width: 100%;
-}
-
-.empty-table-message {
-  padding: 20px;
-  text-align: center;
-  color: grey;
-}
-
-th.mat-column-actions,
-td.mat-column-actions {
-  text-align: right;
-  width: 120px;
-}
-
-.edit-input {
-  width: 90%;
+  p {
+    margin: 0;
+    color: #333;
+    font-size: 0.9em;
+  }
 }

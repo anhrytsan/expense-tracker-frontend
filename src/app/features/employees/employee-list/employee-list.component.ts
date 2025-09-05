@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Employee, EmployeeService } from '../../../core/services/employee.service';
 
 import { MatCardModule } from '@angular/material/card';

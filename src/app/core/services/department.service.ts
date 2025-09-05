@@ -11,6 +11,9 @@ export interface Department {
   updatedAt: string;
   limitAmount?: number;
   spentAmount?: number;
+  carryover?: number;
+  effectiveLimit?: number;
+  available?: number;
 }
 
 @Injectable({
@@ -30,6 +33,10 @@ export class DepartmentService {
       // Update department list after getting data
       tap(data => this.departmentsPrivate.set(data))
     );
+  }
+
+  getAvailableFunds(departmentId: string) {
+    return this.http.get<Department>(`${this.apiUrl}/${departmentId}/available-funds`);
   }
 
   createDepartment(name: string) {

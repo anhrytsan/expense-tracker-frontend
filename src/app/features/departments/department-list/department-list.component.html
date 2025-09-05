@@ -5,6 +5,13 @@
     <mat-card-title>Список відділів</mat-card-title>
   </mat-card-header>
   <mat-card-content>
+    <div class="definition-box">
+      <p>
+        <strong>*Ефективний ліміт</strong> — це загальна сума, доступна відділу на поточний місяць. Вона розраховується як:
+        <em>(Ліміт на поточний місяць) + (Усі невитрачені кошти з попередніх місяців)</em>.
+      </p>
+    </div>
+
     <div class="mat-elevation-z8">
       <table mat-table [dataSource]="departments()">
 
@@ -17,7 +24,8 @@
                       [(ngModel)]="editedDepartmentName"
                       (keyup.enter)="onSave(department)"
                       (keyup.escape)="onCancelEdit()"
-                      (blur)="onBlurSave(department)">  </mat-form-field>
+                      (blur)="onBlurSave(department)">
+              </mat-form-field>
             } @else {
               {{ department.name }}
             }
@@ -34,9 +42,24 @@
           <td mat-cell *matCellDef="let department">{{ department.limitAmount | number }} грн</td>
         </ng-container>
 
+        <ng-container matColumnDef="carryover">
+          <th mat-header-cell *matHeaderCellDef>Залишок з минулих місяців</th>
+          <td mat-cell *matCellDef="let department">{{ department.carryover | number }} грн</td>
+        </ng-container>
+
+        <ng-container matColumnDef="effectiveLimit">
+          <th mat-header-cell *matHeaderCellDef>Ефективний ліміт*</th>
+          <td mat-cell *matCellDef="let department">{{ department.effectiveLimit | number }} грн</td>
+        </ng-container>
+
         <ng-container matColumnDef="spent">
           <th mat-header-cell *matHeaderCellDef>Витрачено (поточний місяць)</th>
           <td mat-cell *matCellDef="let department">{{ department.spentAmount | number }} грн</td>
+        </ng-container>
+
+        <ng-container matColumnDef="available">
+          <th mat-header-cell *matHeaderCellDef>Доступно</th>
+          <td mat-cell *matCellDef="let department">{{ department.available | number }} грн</td>
         </ng-container>
 
         <ng-container matColumnDef="createdAt">

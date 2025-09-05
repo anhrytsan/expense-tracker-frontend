@@ -12,7 +12,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
 // Services
-import { DepartmentService } from '../../../core/services/department.service';
+import { Department, DepartmentService } from '../../../core/services/department.service';
 import { Employee, EmployeeService } from '../../../core/services/employee.service';
 import { ExpenseTypeService } from '../../../core/services/expense-type.service';
 import { ExpenseService } from '../../../core/services/expense.service';
@@ -54,7 +54,7 @@ export class ExpenseCreateComponent implements OnInit {
   expenseForm = this.fb.nonNullable.group({
     amount: [0, [Validators.required, Validators.min(0.01)]],
     date: [new Date().toISOString(), Validators.required],
-    department: ['', Validators.required], // Department is now enabled
+    department: ['', Validators.required],
     employee: ['', Validators.required],
     expenseType: ['', Validators.required],
   });
@@ -64,34 +64,34 @@ export class ExpenseCreateComponent implements OnInit {
   selectedEmployeeId = toSignal(this.expenseForm.controls.employee.valueChanges);
 
   constructor() {
-    // Effect 1: Initialize or update the filtered list when the main employee list changes
+    // Initialize or update the filtered list when the main employee list changes
     effect(() => {
       const allEmployees = this.employees();
       this.filteredEmployees.set(allEmployees);
     });
 
-    // Effect 2: Filter employees when a department is selected
-    effect(() => {
-      const departmentId = this.selectedDepartmentId();
-      const allEmployees = this.employees();
+    // Filter employees when a department is selected
+    effect(
+      () => {
+        const departmentId = this.selectedDepartmentId();
+        const allEmployees = this.employees();
 
-      if (!departmentId) {
-        // If department is cleared, show all employees
-        this.filteredEmployees.set(allEmployees);
-      } else {
-        // Filter employees by the selected department
-        const filtered = allEmployees.filter(emp => emp.department?._id === departmentId);
-        this.filteredEmployees.set(filtered);
+        if (!departmentId) {
+          this.filteredEmployees.set(allEmployees);
+        } else {
+          const filtered = allEmployees.filter((emp) => emp.department?._id === departmentId);
+          this.filteredEmployees.set(filtered);
 
-        // If the currently selected employee is not in the new filtered list, reset the selection
-        const currentEmployeeId = this.expenseForm.getRawValue().employee;
-        if (currentEmployeeId && !filtered.some(emp => emp._id === currentEmployeeId)) {
-          this.expenseForm.controls.employee.reset('');
+          const currentEmployeeId = this.expenseForm.getRawValue().employee;
+          if (currentEmployeeId && !filtered.some((emp) => emp._id === currentEmployeeId)) {
+            this.expenseForm.controls.employee.reset('');
+          }
         }
-      }
-    });
+      },
+      { allowSignalWrites: true }
+    );
 
-    // Effect 3: Auto-select department when an employee is selected
+    // Auto-select department when an employee is selected
     effect(() => {
       const employeeId = this.selectedEmployeeId();
       const allEmployees = this.employees();
@@ -99,8 +99,10 @@ export class ExpenseCreateComponent implements OnInit {
       if (employeeId && allEmployees.length > 0) {
         const selectedEmployee = allEmployees.find((emp) => emp._id === employeeId);
         if (selectedEmployee?.department) {
-          // Set department value without triggering the department's valueChanges effect
-          this.expenseForm.controls.department.setValue(selectedEmployee.department._id, { emitEvent: false });
+          const departmentControl = this.expenseForm.controls.department;
+          if (departmentControl.value !== selectedEmployee.department._id) {
+            departmentControl.setValue(selectedEmployee.department._id);
+          }
         }
       }
     });
@@ -127,7 +129,13 @@ export class ExpenseCreateComponent implements OnInit {
       this.expenseService.createExpense(this.expenseForm.getRawValue()).subscribe({
         next: () => {
           this.notificationService.showSuccess('Витрату успішно створено!');
-          this.expenseForm.reset({ date: new Date().toISOString(), amount: 0, department: '', employee: '', expenseType: '' });
+          this.expenseForm.reset({
+            date: new Date().toISOString(),
+            amount: 0,
+            department: '',
+            employee: '',
+            expenseType: '',
+          });
         },
         error: (err) => {
           const message = err.error.message || 'Невідома помилка';

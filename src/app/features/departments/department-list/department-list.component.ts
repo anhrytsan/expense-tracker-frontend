@@ -35,8 +35,7 @@ export class DepartmentListComponent implements OnInit {
   departments = this.departmentService.departments;
 
   // Array with the names of the columns we want to display
-  displayedColumns: string[] = ['name', 'numberOfEmployees', 'limit', 'spent', 'createdAt', 'actions'];
-
+  displayedColumns: string[] = ['name', 'numberOfEmployees', 'limit', 'carryover', 'effectiveLimit', 'spent', 'available', 'createdAt', 'actions'];
   // Editing management
   editingDepartmentId: string | null = null;
   editedDepartmentName: string = '';
