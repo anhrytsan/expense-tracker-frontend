@@ -30,6 +30,13 @@ export interface CreateExpenseDto {
   department: string; // ID
 }
 
+export interface PaginatedExpenses {
+  docs: Expense[];
+  totalDocs: number;
+  totalPages: number;
+  currentPage: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -39,13 +46,18 @@ export class ExpenseService {
 
   private expensesPrivate = signal<Expense[]>([]);
   public readonly expenses = this.expensesPrivate.asReadonly();
+  private totalExpensesPrivate = signal(0);
+  public readonly totalExpenses = this.totalExpensesPrivate.asReadonly();
 
   getExpenses(filters: any = {}) {
     const params = new HttpParams({ fromObject: filters });
 
     return this.http
-      .get<Expense[]>(this.apiUrl, { params })
-      .pipe(tap((data) => this.expensesPrivate.set(data)));
+      .get<PaginatedExpenses>(this.apiUrl, { params })
+      .pipe(tap((data) => {
+        this.expensesPrivate.set(data.docs);
+        this.totalExpensesPrivate.set(data.totalDocs);
+      }));
   }
 
   createExpense(expenseData: CreateExpenseDto) {

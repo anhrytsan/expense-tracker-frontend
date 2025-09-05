@@ -1,9 +1,11 @@
-import { Component, OnInit, effect, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop'; // <-- Додай toSignal
+// front/src/app/features/expenses/expense-list/expense-list.component.ts
+
+import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
-import { debounceTime, distinctUntilChanged, startWith } from 'rxjs'; // <-- Імпортуй оператори з 'rxjs'
+import { debounceTime, distinctUntilChanged, startWith } from 'rxjs';
 
 // Material Modules
 import { MatCardModule } from '@angular/material/card';
@@ -13,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 // Components and Services
 import { ExpenseCreateComponent } from '../expense-create/expense-create.component';
@@ -36,6 +39,7 @@ import { ExpenseTypeService } from '../../../core/services/expense-type.service'
     MatButtonModule,
     MatIconModule,
     ExpenseCreateComponent,
+    MatPaginatorModule,
   ],
   templateUrl: './expense-list.component.html',
   styleUrl: './expense-list.component.scss',
@@ -47,21 +51,19 @@ export class ExpenseListComponent implements OnInit {
   private employeeService = inject(EmployeeService);
   private expenseTypeService = inject(ExpenseTypeService);
 
-  // Data for table and filters
+  // Data signals
   expenses = this.expenseService.expenses;
+  totalExpenses = this.expenseService.totalExpenses;
   departments = this.departmentService.departments;
   employees = this.employeeService.employees;
   expenseTypes = this.expenseTypeService.expenseTypes;
   positions = this.employeeService.positions;
 
-  displayedColumns: string[] = [
-    'date',
-    'amount',
-    'expenseType',
-    'employee',
-    'position',
-    'department',
-  ];
+  // Pagination signals
+  pageSize = signal(10);
+  pageIndex = signal(0);
+
+  displayedColumns: string[] = ['date', 'amount', 'expenseType', 'employee', 'position', 'department'];
 
   filterForm = this.fb.group({
     department: [''],
@@ -70,20 +72,16 @@ export class ExpenseListComponent implements OnInit {
     position: [''],
   });
 
-  // Create a signal that updates when the form values change
   private filtersSignal = toSignal(
-    this.filterForm.valueChanges.pipe(
-      startWith(this.filterForm.value), // Emit the initial value
-      debounceTime(400)
-    )
+    this.filterForm.valueChanges.pipe(startWith(this.filterForm.value), debounceTime(400))
   );
 
   constructor() {
-    // React to filter changes
     effect(() => {
       const filters = this.filtersSignal();
       if (filters) {
-        this.loadExpenses(filters);
+        this.pageIndex.set(0); // Reset to first page on filter change
+        this.loadExpenses();
       }
     });
   }
@@ -92,22 +90,35 @@ export class ExpenseListComponent implements OnInit {
     this.loadFilterData();
   }
 
-  loadExpenses(filters: any = {}): void {
-    // Clean filters from empty values
+  loadExpenses(): void {
+    const filters = this.filterForm.value;
     const cleanFilters = Object.fromEntries(
       Object.entries(filters).filter(([_, v]) => v != null && v !== '')
     );
-    this.expenseService.getExpenses(cleanFilters).subscribe();
+
+    const params = {
+      ...cleanFilters,
+      page: this.pageIndex() + 1,
+      limit: this.pageSize(),
+    };
+
+    this.expenseService.getExpenses(params).subscribe();
   }
 
   loadFilterData(): void {
     this.departmentService.getDepartments().subscribe();
     this.employeeService.getEmployees().subscribe();
     this.expenseTypeService.getExpenseTypes().subscribe();
-    this.employeeService.getPositions().subscribe(); 
+    this.employeeService.getPositions().subscribe();
   }
 
   clearFilters(): void {
     this.filterForm.reset({ department: '', expenseType: '', employee: '', position: '' });
+  }
+
+  handlePageEvent(event: PageEvent) {
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
+    this.loadExpenses();
   }
 }
