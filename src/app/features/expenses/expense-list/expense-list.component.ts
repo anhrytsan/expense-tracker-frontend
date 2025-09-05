@@ -52,6 +52,7 @@ export class ExpenseListComponent implements OnInit {
   departments = this.departmentService.departments;
   employees = this.employeeService.employees;
   expenseTypes = this.expenseTypeService.expenseTypes;
+  positions = this.employeeService.positions;
 
   displayedColumns: string[] = [
     'date',
@@ -103,6 +104,7 @@ export class ExpenseListComponent implements OnInit {
     this.departmentService.getDepartments().subscribe();
     this.employeeService.getEmployees().subscribe();
     this.expenseTypeService.getExpenseTypes().subscribe();
+    this.employeeService.getPositions().subscribe(); 
   }
 
   clearFilters(): void {

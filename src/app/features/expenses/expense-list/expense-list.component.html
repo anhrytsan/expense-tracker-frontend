@@ -37,8 +37,13 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Посада (пошук)</mat-label>
-        <input matInput formControlName="position" placeholder="Напр., менеджер">
+        <mat-label>Посада</mat-label>
+        <mat-select formControlName="position">
+          <mat-option value="">Всі посади</mat-option>
+          @for (pos of positions(); track pos) {
+            <mat-option [value]="pos">{{ pos }}</mat-option>
+          }
+        </mat-select>
       </mat-form-field>
     </div>
     <div class="filter-actions">

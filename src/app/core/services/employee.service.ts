@@ -28,6 +28,9 @@ export class EmployeeService {
   private employeesPrivate = signal<Employee[]>([]);
   public readonly employees = this.employeesPrivate.asReadonly();
 
+  private positionsPrivate = signal<string[]>([]);
+  public readonly positions = this.positionsPrivate.asReadonly();
+
   getEmployees() {
     return this.http.get<Employee[]>(this.apiUrl).pipe(
       tap(data => this.employeesPrivate.set(data))
@@ -36,8 +39,13 @@ export class EmployeeService {
 
   createEmployee(employeeData: CreateEmployeeDto) {
     return this.http.post<Employee>(this.apiUrl, employeeData).pipe(
-      // Update employees list after creating
       tap(() => this.getEmployees().subscribe())
+    );
+  }
+
+  getPositions() {
+    return this.http.get<string[]>(`${this.apiUrl}/positions`).pipe(
+      tap(data => this.positionsPrivate.set(data))
     );
   }
 }
