@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { Department, DepartmentService } from './department.service'; // <-- 1. Імпортуємо DepartmentService
+import { Department, DepartmentService } from './department.service';
+import { environment } from '../../../environments/environment';
 
 // Interface for data to send to server
 export interface SetMonthlyLimitDto {
@@ -27,7 +28,7 @@ export interface MonthlyLimit {
 export class MonthlyLimitService {
   private http = inject(HttpClient);
   private departmentService = inject(DepartmentService); // <-- 2. Інжектуємо сервіс
-  private apiUrl = 'http://localhost:3000/api/limits';
+  private apiUrl = `${environment.apiUrl}/api/limits`;
 
   private limitsPrivate = signal<MonthlyLimit[]>([]);
   public readonly limits = this.limitsPrivate.asReadonly();

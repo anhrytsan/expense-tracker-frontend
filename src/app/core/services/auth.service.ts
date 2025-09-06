@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 // Move later to shared/models
 
@@ -29,7 +30,7 @@ interface UserCredentials {
 export class AuthService {
   private http = inject(HttpClient);
 
-  private apiUrl = 'http://localhost:3000/api/auth';
+  private apiUrl = `${environment.apiUrl}/api/auth`;
 
   // Signal with registered user data
   currentUser = signal<UserCredentials | null>(null);

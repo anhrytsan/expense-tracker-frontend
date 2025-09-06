@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
 import { Department } from './department.service';
 import { Expense } from './expense.service';
+import { environment } from '../../../environments/environment';
 
 export interface DepartmentLimit {
   _id: string;
@@ -27,7 +28,7 @@ export interface DashboardSummary {
 })
 export class DashboardService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/dashboard';
+  private apiUrl = `${environment.apiUrl}/api/dashboard`;
 
   private summaryPrivate = signal<DashboardSummary | null>(null);
   public readonly summary = this.summaryPrivate.asReadonly();

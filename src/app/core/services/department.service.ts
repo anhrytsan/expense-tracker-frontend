@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 // Move later to shared/models
 export interface Department {
@@ -21,7 +22,7 @@ export interface Department {
 })
 export class DepartmentService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/departments';
+  private apiUrl = `${environment.apiUrl}/api/departments`;
 
   // Single source of truth for DepartmentListComponent and EmployeeCreateComponent
   private departmentsPrivate = signal<Department[]>([]);

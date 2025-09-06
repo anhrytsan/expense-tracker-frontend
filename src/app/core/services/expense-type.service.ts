@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
 import { ExpenseType } from './expense.service';
+import { environment } from '../../../environments/environment';
 
 // Interface for creating/updating
 export interface CreateExpenseTypeDto {
@@ -15,7 +16,7 @@ export interface CreateExpenseTypeDto {
 })
 export class ExpenseTypeService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/expense-types';
+  private apiUrl = `${environment.apiUrl}/api/expense-types`;
 
   // Signal for storing expense types
   private expenseTypesPrivate = signal<ExpenseType[]>([]);

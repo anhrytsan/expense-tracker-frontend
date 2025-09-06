@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Department } from './department.service';
 import { tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface Employee {
   _id: string;
@@ -33,11 +34,11 @@ export interface PaginatedEmployees {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EmployeeService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/employees';
+  private apiUrl = `${environment.apiUrl}/api/employees`;
 
   // Сигнал для пагінованого списку (використовується в EmployeeListComponent)
   private employeesPrivate = signal<Employee[]>([]);
@@ -58,8 +59,8 @@ export class EmployeeService {
     const params = new HttpParams({ fromObject: filters });
 
     return this.http.get<PaginatedEmployees>(this.apiUrl, { params }).pipe(
-      tap(data => {
-        this.employeesPrivate.set(data.docs)
+      tap((data) => {
+        this.employeesPrivate.set(data.docs);
         this.totalEmployeesPrivate.set(data.totalDocs);
       })
     );
@@ -72,7 +73,7 @@ export class EmployeeService {
       return;
     }
     const params = new HttpParams({ fromObject: { limit: '0' } });
-    this.http.get<PaginatedEmployees>(this.apiUrl, { params }).subscribe(data => {
+    this.http.get<PaginatedEmployees>(this.apiUrl, { params }).subscribe((data) => {
       this.allEmployeesPrivate.set(data.docs);
     });
   }
@@ -109,8 +110,8 @@ export class EmployeeService {
   }
 
   getPositions() {
-    return this.http.get<string[]>(`${this.apiUrl}/positions`).pipe(
-      tap(data => this.positionsPrivate.set(data))
-    );
+    return this.http
+      .get<string[]>(`${this.apiUrl}/positions`)
+      .pipe(tap((data) => this.positionsPrivate.set(data)));
   }
 }

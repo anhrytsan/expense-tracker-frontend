@@ -3,6 +3,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Department } from './department.service';
 import { Employee } from './employee.service';
 import { tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface ExpenseType {
   _id: string;
@@ -42,7 +43,7 @@ export interface PaginatedExpenses {
 })
 export class ExpenseService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/expenses';
+  private apiUrl = `${environment.apiUrl}/api/expenses`;
 
   private expensesPrivate = signal<Expense[]>([]);
   public readonly expenses = this.expensesPrivate.asReadonly();
