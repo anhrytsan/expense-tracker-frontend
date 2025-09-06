@@ -11,7 +11,7 @@
         <mat-select formControlName="department">
           <mat-option value="">Всі відділи</mat-option>
           @for (dep of departments(); track dep._id) {
-            <mat-option [value]="dep._id">{{ dep.name }}</mat-option>
+          <mat-option [value]="dep._id">{{ dep.name }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -21,7 +21,7 @@
         <mat-select formControlName="expenseType">
           <mat-option value="">Всі типи</mat-option>
           @for (type of expenseTypes(); track type._id) {
-            <mat-option [value]="type._id">{{ type.name }}</mat-option>
+          <mat-option [value]="type._id">{{ type.name }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -31,7 +31,7 @@
         <mat-select formControlName="employee">
           <mat-option value="">Всі співробітники</mat-option>
           @for (emp of employees(); track emp._id) {
-            <mat-option [value]="emp._id">{{ emp.name }}</mat-option>
+          <mat-option [value]="emp._id">{{ emp.name }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -41,7 +41,7 @@
         <mat-select formControlName="position">
           <mat-option value="">Всі посади</mat-option>
           @for (pos of positions(); track pos) {
-            <mat-option [value]="pos">{{ pos }}</mat-option>
+          <mat-option [value]="pos">{{ pos }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -57,9 +57,8 @@
     <mat-card-title>Список витрат</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <div class="mat-elevation-z8">
+    <div class="table-responsive-wrapper mat-elevation-z8">
       <table mat-table [dataSource]="expenses()">
-
         <ng-container matColumnDef="date">
           <th mat-header-cell *matHeaderCellDef>Дата</th>
           <td mat-cell *matCellDef="let exp">{{ exp.date | date : 'dd.MM.yyyy' }}</td>
@@ -105,7 +104,8 @@
         [pageSize]="pageSize()"
         [pageSizeOptions]="[5, 10, 25, 100]"
         [pageIndex]="pageIndex()"
-        aria-label="Select page">
+        aria-label="Select page"
+      >
       </mat-paginator>
     </div>
   </mat-card-content>

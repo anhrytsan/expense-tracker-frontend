@@ -37,7 +37,7 @@
     <mat-card-title>Список співробітників</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <div class="mat-elevation-z8">
+    <div class="table-responsive-wrapper mat-elevation-z8">
       <table mat-table [dataSource]="employees()">
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef>Ім'я співробітника</th>
@@ -122,7 +122,8 @@
         [pageSize]="pageSize()"
         [pageSizeOptions]="[5, 10, 25, 100]"
         [pageIndex]="pageIndex()"
-        aria-label="Select page">
+        aria-label="Select page"
+      >
       </mat-paginator>
     </div>
   </mat-card-content>

@@ -1,0 +1,33 @@
+.table-card {
+  margin-top: 20px;
+  position: relative; // Важливо для позиціонування кнопки
+}
+
+.card-fab-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1; // Щоб кнопка була поверх інших елементів
+}
+
+// Старі стилі для заголовка та спейсера більше не потрібні
+/*
+mat-card-header { ... }
+.spacer { ... }
+*/
+
+table {
+  width: 100%;
+}
+
+.empty-table-message {
+  padding: 20px;
+  text-align: center;
+  color: grey;
+}
+
+th.mat-column-actions,
+td.mat-column-actions {
+  text-align: right;
+  justify-content: flex-end;
+}

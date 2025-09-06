@@ -79,3 +79,8 @@ mat-card-content form {
   gap: 8px;
   margin-top: 16px; // Додатковий відступ зверху
 }
+
+// Wrapper for responsive tables
+.table-responsive-wrapper {
+  overflow-x: auto;
+}
