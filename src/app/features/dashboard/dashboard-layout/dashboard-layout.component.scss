@@ -32,3 +32,8 @@
     padding: 16px;
   }
 }
+
+.sidenav .mat-mdc-list-item.active-list-item {
+  background-color: rgba(63, 81, 181, 0.1); // Світлий фон в колір теми
+  color: var(--mdc-protected-button-label-text-color, #3f51b5); // Колір тексту як у теми
+}

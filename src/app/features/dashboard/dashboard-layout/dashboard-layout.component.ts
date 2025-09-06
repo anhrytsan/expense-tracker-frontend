@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop'; // <-- 1. Імпортуємо toSignal
-import { Router, RouterOutlet, RouterLink } from '@angular/router';
+import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { map } from 'rxjs/operators';
 
@@ -23,6 +23,7 @@ import { AuthService } from '../../../core/services/auth.service';
     CommonModule,
     RouterOutlet,
     RouterLink,
+    RouterLinkActive,
     MatSidenavModule,
     MatListModule,
     MatToolbarModule,

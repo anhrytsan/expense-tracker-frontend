@@ -7,16 +7,46 @@
   >
     <mat-toolbar color="primary">Меню</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item routerLink="overview" (click)="isHandset() && sidenav.close()">Головна</a>
-      <a mat-list-item routerLink="expenses" (click)="isHandset() && sidenav.close()">Витрати</a>
-      <a mat-list-item routerLink="departments" (click)="isHandset() && sidenav.close()">Відділи</a>
-      <a mat-list-item routerLink="employees" (click)="isHandset() && sidenav.close()"
+      <a
+        mat-list-item
+        routerLink="overview"
+        routerLinkActive="active-list-item"
+        (click)="isHandset() && sidenav.close()"
+        >Головна</a
+      >
+      <a
+        mat-list-item
+        routerLink="expenses"
+        routerLinkActive="active-list-item"
+        (click)="isHandset() && sidenav.close()"
+        >Витрати</a
+      >
+      <a
+        mat-list-item
+        routerLink="departments"
+        routerLinkActive="active-list-item"
+        (click)="isHandset() && sidenav.close()"
+        >Відділи</a
+      >
+      <a
+        mat-list-item
+        routerLink="employees"
+        routerLinkActive="active-list-item"
+        (click)="isHandset() && sidenav.close()"
         >Співробітники</a
       >
-      <a mat-list-item routerLink="expense-types" (click)="isHandset() && sidenav.close()"
+      <a
+        mat-list-item
+        routerLink="expense-types"
+        routerLinkActive="active-list-item"
+        (click)="isHandset() && sidenav.close()"
         >Типи витрат</a
       >
-      <a mat-list-item routerLink="limits" (click)="isHandset() && sidenav.close()"
+      <a
+        mat-list-item
+        routerLink="limits"
+        routerLinkActive="active-list-item"
+        (click)="isHandset() && sidenav.close()"
         >Встановити ліміт</a
       >
     </mat-nav-list>
