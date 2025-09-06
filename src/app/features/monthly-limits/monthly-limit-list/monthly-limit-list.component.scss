@@ -1,16 +1,18 @@
 .table-card {
   margin-top: 20px;
+  position: relative; // Важливо для позиціонування кнопки
 }
 
 mat-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
+  // Додаємо відступ знизу, щоб кнопка не наїжджала на контент
+  padding-bottom: 24px;
 }
 
-.spacer {
-  flex: 1 1 auto;
+.card-fab-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1; // Щоб кнопка була поверх інших елементів
 }
 
 table {
