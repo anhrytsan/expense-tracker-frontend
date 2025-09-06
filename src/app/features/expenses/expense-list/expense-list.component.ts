@@ -1,11 +1,10 @@
 // front/src/app/features/expenses/expense-list/expense-list.component.ts
 
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, OnInit, inject, signal } from '@angular/core';
 
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
-import { debounceTime, distinctUntilChanged, startWith } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 // Material Modules
 import { MatCardModule } from '@angular/material/card';
@@ -55,7 +54,7 @@ export class ExpenseListComponent implements OnInit {
   expenses = this.expenseService.expenses;
   totalExpenses = this.expenseService.totalExpenses;
   departments = this.departmentService.departments;
-  employees = this.employeeService.employees;
+  employees = this.employeeService.allEmployees; // Використовуємо повний список
   expenseTypes = this.expenseTypeService.expenseTypes;
   positions = this.employeeService.positions;
 
@@ -63,7 +62,14 @@ export class ExpenseListComponent implements OnInit {
   pageSize = signal(10);
   pageIndex = signal(0);
 
-  displayedColumns: string[] = ['date', 'amount', 'expenseType', 'employee', 'position', 'department'];
+  displayedColumns: string[] = [
+    'date',
+    'amount',
+    'expenseType',
+    'employee',
+    'position',
+    'department',
+  ];
 
   filterForm = this.fb.group({
     department: [''],
@@ -72,22 +78,19 @@ export class ExpenseListComponent implements OnInit {
     position: [''],
   });
 
-  private filtersSignal = toSignal(
-    this.filterForm.valueChanges.pipe(startWith(this.filterForm.value), debounceTime(400))
-  );
-
-  constructor() {
-    effect(() => {
-      const filters = this.filtersSignal();
-      if (filters) {
-        this.pageIndex.set(0); // Reset to first page on filter change
-        this.loadExpenses();
-      }
-    });
-  }
-
   ngOnInit(): void {
     this.loadFilterData();
+    this.loadExpenses(); // Первинне завантаження
+
+    this.filterForm.valueChanges
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
+      )
+      .subscribe(() => {
+        this.pageIndex.set(0); // Reset to first page on filter change
+        this.loadExpenses();
+      });
   }
 
   loadExpenses(): void {
@@ -107,7 +110,7 @@ export class ExpenseListComponent implements OnInit {
 
   loadFilterData(): void {
     this.departmentService.getDepartments().subscribe();
-    this.employeeService.getEmployees().subscribe();
+    this.employeeService.loadAllEmployeesForForms(); // Використовуємо правильний метод
     this.expenseTypeService.getExpenseTypes().subscribe();
     this.employeeService.getPositions().subscribe();
   }

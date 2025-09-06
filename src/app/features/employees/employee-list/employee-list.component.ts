@@ -1,4 +1,6 @@
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+// front/src/app/features/employees/employee-list/employee-list.component.ts
+
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { filter } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
@@ -6,11 +8,14 @@ import { ConfirmationDialogComponent } from '../../../shared/components/confirma
 // ... інші імпорти (CommonModule, FormsModule, ReactiveFormsModule і т.д.)
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { debounceTime, startWith } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 // Services
-import { Employee, EmployeeService, UpdateEmployeeDto } from '../../../core/services/employee.service';
+import {
+  Employee,
+  EmployeeService,
+  UpdateEmployeeDto,
+} from '../../../core/services/employee.service';
 import { DepartmentService } from '../../../core/services/department.service';
 import { NotificationService } from '../../../core/services/notification.service';
 
@@ -26,7 +31,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-
 
 @Component({
   selector: 'app-employee-list',
@@ -73,22 +77,19 @@ export class EmployeeListComponent implements OnInit {
     position: [''],
   });
 
-  private filtersSignal = toSignal(
-    this.filterForm.valueChanges.pipe(startWith(this.filterForm.value), debounceTime(400))
-  );
-
-  constructor() {
-    effect(() => {
-      const filters = this.filtersSignal();
-      if (filters) {
-        this.pageIndex.set(0);
-        this.loadEmployees();
-      }
-    });
-  }
-
   ngOnInit(): void {
     this.loadFilterData();
+    this.loadEmployees(); // Первинне завантаження даних
+
+    this.filterForm.valueChanges
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
+      )
+      .subscribe(() => {
+        this.pageIndex.set(0);
+        this.loadEmployees();
+      });
   }
 
   loadEmployees(): void {
@@ -126,7 +127,7 @@ export class EmployeeListComponent implements OnInit {
     this.editForm = {
       name: employee.name,
       position: employee.position,
-      department: employee.department._id
+      department: employee.department._id,
     };
   }
 
@@ -137,14 +138,14 @@ export class EmployeeListComponent implements OnInit {
 
   onSave(employeeId: string): void {
     if (!this.editForm.name.trim() || !this.editForm.position.trim()) {
-      this.notificationService.showError('Ім\'я та посада не можуть бути порожніми.');
+      this.notificationService.showError("Ім'я та посада не можуть бути порожніми.");
       return;
     }
 
     const updatedData: UpdateEmployeeDto = {
       name: this.editForm.name,
       position: this.editForm.position,
-      department: this.editForm.department
+      department: this.editForm.department,
     };
 
     this.employeeService.updateEmployee(employeeId, updatedData).subscribe({
@@ -166,8 +167,9 @@ export class EmployeeListComponent implements OnInit {
       },
     });
 
-    dialogRef.afterClosed()
-      .pipe(filter(result => result === true))
+    dialogRef
+      .afterClosed()
+      .pipe(filter((result) => result === true))
       .subscribe(() => {
         this.employeeService.deleteEmployee(employee._id).subscribe({
           next: () => {
