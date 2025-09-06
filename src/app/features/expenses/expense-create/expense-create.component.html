@@ -6,18 +6,6 @@
   <mat-card-content>
     <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
       <mat-form-field appearance="outline">
-        <mat-label>Сума</mat-label>
-        <input matInput type="number" formControlName="amount" placeholder="100.00" />
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Дата</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="date" />
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
         <mat-label>Відділ</mat-label>
         <mat-select formControlName="department">
           @for (dep of departments(); track dep._id) {
@@ -25,6 +13,30 @@
           }
         </mat-select>
       </mat-form-field>
+
+      @if (selectedDepartmentId()) {
+      <div class="info-container">
+        @if (isLoadingFunds()) {
+        <div class="spinner-container">
+          <mat-spinner diameter="24"></mat-spinner>
+          <span>Завантаження даних по ліміту...</span>
+        </div>
+        } @if (departmentFunds(); as funds) {
+        <div class="info-item">
+          <mat-icon color="primary">account_balance</mat-icon>
+          <span>Ефективний ліміт: <strong>{{ funds.effectiveLimit | number : '1.2-2' }} грн</strong></span>
+        </div>
+        <div class="info-item">
+          <mat-icon color="warn">payment</mat-icon>
+          <span>Витрачено: <strong>{{ funds.spentAmount | number : '1.2-2' }} грн</strong></span>
+        </div>
+        <div class="info-item available">
+          <mat-icon>account_balance_wallet</mat-icon>
+          <span>Доступно: <strong>{{ funds.available | number : '1.2-2' }} грн</strong></span>
+        </div>
+        }
+      </div>
+      }
 
       <mat-form-field appearance="outline">
         <mat-label>Співробітник</mat-label>
@@ -44,6 +56,33 @@
         </mat-select>
       </mat-form-field>
 
+      @if (selectedExpenseType(); as type) {
+        <div class="info-container type-limit">
+          <div class="info-item">
+            <mat-icon>credit_card</mat-icon>
+            <span>Ліміт на транзакцію: <strong>{{ type.limit | number : '1.2-2' }} грн</strong></span>
+          </div>
+        </div>
+      }
+
+      <mat-form-field appearance="outline">
+        <mat-label>Сума</mat-label>
+        <input matInput type="number" formControlName="amount" placeholder="100.00" />
+        @if(maxAllowedAmount() > 0) {
+        <mat-hint align="start" class="hint-available">
+          Максимально можлива сума: {{ maxAllowedAmount() | number : '1.2-2' }} грн
+        </mat-hint>
+        }
+        <mat-error>{{ amountValidationMessage() }}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Дата</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
       <button mat-raised-button color="primary" type="submit" [disabled]="expenseForm.invalid">
         Створити
       </button>
@@ -52,7 +91,8 @@
 </mat-card>
 } @else {
 <mat-card>
-  <mat-card-content style="text-align: center; padding: 20px">
+  <mat-card-content class="loading-data-card">
+    <mat-spinner diameter="40"></mat-spinner>
     <p>Завантаження даних для форми...</p>
   </mat-card-content>
 </mat-card>
