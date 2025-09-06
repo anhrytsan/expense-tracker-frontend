@@ -1,14 +1,14 @@
 // front/src/app/features/departments/department-list/department-list.component.ts
 
-import { Component, OnInit, inject, signal, computed } from '@angular/core'; // Додаємо signal і computed
+import { AfterViewInit, Component, OnInit, inject, signal, computed, ViewChild, effect } from '@angular/core';
 import { filter } from 'rxjs';
 import { Department, DepartmentService } from '../../../core/services/department.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
-// ... інші імпорти
-import { MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { DepartmentCreateComponent } from '../department-create/department-create.component';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -16,13 +16,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-// --- НОВІ ІМПОРТИ ---
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 
-// --- НОВИЙ ТИП ДЛЯ ЗРУЧНОСТІ ---
 type SortableField = keyof Department | 'limit' | 'spent' | 'carryover' | 'effectiveLimit' | 'available';
-
 
 @Component({
   selector: 'app-department-list',
@@ -37,32 +34,31 @@ type SortableField = keyof Department | 'limit' | 'spent' | 'carryover' | 'effec
     MatIconModule,
     MatInputModule,
     FormsModule,
-    // --- ДОДАЄМО НОВІ МОДУЛІ ---
     MatFormFieldModule,
     MatSelectModule,
+    MatPaginatorModule,
   ],
   templateUrl: './department-list.component.html',
   styleUrl: './department-list.component.scss',
 })
-export class DepartmentListComponent implements OnInit {
+export class DepartmentListComponent implements OnInit, AfterViewInit {
   private departmentService = inject(DepartmentService);
   private notificationService = inject(NotificationService);
   private dialog = inject(MatDialog);
 
   private departments = this.departmentService.departments;
 
+  dataSource = new MatTableDataSource<Department>([]);
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   editingDepartmentId: string | null = null;
   editedDepartmentName: string = '';
 
   displayedColumns: string[] = ['name', 'numberOfEmployees', 'limit', 'carryover', 'effectiveLimit', 'spent', 'available', 'createdAt', 'actions'];
 
-  // --- НОВА ЛОГІКА СОРТУВАННЯ ---
-
-  // 1. Сигнали для зберігання поточних значень сортування
   sortBy = signal<SortableField>('createdAt');
   sortDirection = signal<'asc' | 'desc'>('desc');
 
-  // 2. Опції для першого дропдауну
   sortOptions: { value: SortableField; viewValue: string }[] = [
     { value: 'effectiveLimit', viewValue: 'Ефективний ліміт' },
     { value: 'limitAmount', viewValue: 'Ліміт (поточний місяць)' },
@@ -73,7 +69,6 @@ export class DepartmentListComponent implements OnInit {
     { value: 'createdAt', viewValue: 'Дата створення' },
   ];
 
-  // 3. Обчислюваний сигнал для опцій другого дропдауну (залежить від sortBy)
   directionOptions = computed(() => {
     if (this.sortBy() === 'createdAt') {
       return [
@@ -87,19 +82,16 @@ export class DepartmentListComponent implements OnInit {
     ];
   });
 
-  // 4. Обчислюваний сигнал, який повертає відсортований масив
   sortedDepartments = computed(() => {
-    const depts = [...this.departments()]; // Створюємо копію, щоб не мутувати оригінал
+    const depts = [...this.departments()];
     const key = this.sortBy();
     const direction = this.sortDirection();
 
-    // Скидаємо напрямок, якщо він не підходить для вибраного поля
     if (key === 'createdAt' && !['asc', 'desc'].includes(direction)) {
       this.sortDirection.set('desc');
     }
 
     depts.sort((a, b) => {
-      // Визначаємо значення для порівняння, враховуючи можливий undefined
       const valA = a[key as keyof Department] ?? 0;
       const valB = b[key as keyof Department] ?? 0;
 
@@ -119,12 +111,19 @@ export class DepartmentListComponent implements OnInit {
     return depts;
   });
 
+  constructor() {
+    effect(() => {
+      this.dataSource.data = this.sortedDepartments();
+    });
+  }
 
   ngOnInit(): void {
     this.departmentService.getDepartments().subscribe();
   }
 
-  // --- МЕТОДИ РЕДАГУВАННЯ ТА ВИДАЛЕННЯ ЗАЛИШАЮТЬСЯ БЕЗ ЗМІН ---
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
 
   onBlurSave(department: Department): void {
     setTimeout(() => {
