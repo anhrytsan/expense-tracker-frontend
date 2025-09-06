@@ -12,7 +12,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
 // Services
-import { Department, DepartmentService } from '../../../core/services/department.service';
+import { DepartmentService } from '../../../core/services/department.service';
 import { Employee, EmployeeService } from '../../../core/services/employee.service';
 import { ExpenseTypeService } from '../../../core/services/expense-type.service';
 import { ExpenseService } from '../../../core/services/expense.service';
@@ -45,7 +45,8 @@ export class ExpenseCreateComponent implements OnInit {
 
   // Signals from services
   departments = this.departmentService.departments;
-  employees = this.employeeService.employees;
+  // --- ВИКОРИСТОВУЄМО НОВИЙ СИГНАЛ ---
+  employees = this.employeeService.allEmployees;
   expenseTypes = this.expenseTypeService.expenseTypes;
 
   // Signal for the filtered list of employees
@@ -116,9 +117,8 @@ export class ExpenseCreateComponent implements OnInit {
     this.departmentService.getDepartments().subscribe({
       error: (err) => console.error('Помилка завантаження відділів:', err),
     });
-    this.employeeService.getEmployees().subscribe({
-      error: (err) => console.error('Помилка завантаження співробітників:', err),
-    });
+    // --- ВИКЛИКАЄМО НОВИЙ МЕТОД ---
+    this.employeeService.loadAllEmployeesForForms();
     this.expenseTypeService.getExpenseTypes().subscribe({
       error: (err) => console.error('Помилка завантаження типів витрат:', err),
     });

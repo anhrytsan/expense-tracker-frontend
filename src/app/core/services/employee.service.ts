@@ -39,8 +39,13 @@ export class EmployeeService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:3000/api/employees';
 
+  // Сигнал для пагінованого списку (використовується в EmployeeListComponent)
   private employeesPrivate = signal<Employee[]>([]);
   public readonly employees = this.employeesPrivate.asReadonly();
+
+  // --- НОВИЙ СИГНАЛ --- для повного списку (для форм)
+  private allEmployeesPrivate = signal<Employee[]>([]);
+  public readonly allEmployees = this.allEmployeesPrivate.asReadonly();
 
   private totalEmployeesPrivate = signal(0);
   public readonly totalEmployees = this.totalEmployeesPrivate.asReadonly();
@@ -48,6 +53,7 @@ export class EmployeeService {
   private positionsPrivate = signal<string[]>([]);
   public readonly positions = this.positionsPrivate.asReadonly();
 
+  // Цей метод залишається для пагінації
   getEmployees(filters: any = {}) {
     const params = new HttpParams({ fromObject: filters });
 
@@ -59,23 +65,46 @@ export class EmployeeService {
     );
   }
 
+  // --- НОВИЙ МЕТОД --- для завантаження всіх співробітників
+  loadAllEmployeesForForms() {
+    // Якщо дані вже завантажені, не робимо повторний запит
+    if (this.allEmployeesPrivate().length > 0) {
+      return;
+    }
+    const params = new HttpParams({ fromObject: { limit: '0' } });
+    this.http.get<PaginatedEmployees>(this.apiUrl, { params }).subscribe(data => {
+      this.allEmployeesPrivate.set(data.docs);
+    });
+  }
+
   createEmployee(employeeData: CreateEmployeeDto) {
     return this.http.post<Employee>(this.apiUrl, employeeData).pipe(
-      tap(() => this.getEmployees().subscribe())
+      tap(() => {
+        this.getEmployees().subscribe();
+        // Оновлюємо і повний список
+        this.allEmployeesPrivate.set([]); // Скидаємо, щоб перезавантажити
+        this.loadAllEmployeesForForms();
+      })
     );
   }
 
-  // --- NEW METHOD ---
   updateEmployee(id: string, employeeData: UpdateEmployeeDto) {
     return this.http.patch<Employee>(`${this.apiUrl}/${id}`, employeeData).pipe(
-      tap(() => this.getEmployees().subscribe())
+      tap(() => {
+        this.getEmployees().subscribe();
+        this.allEmployeesPrivate.set([]);
+        this.loadAllEmployeesForForms();
+      })
     );
   }
 
-  // --- NEW METHOD ---
   deleteEmployee(id: string) {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      tap(() => this.getEmployees().subscribe())
+      tap(() => {
+        this.getEmployees().subscribe();
+        this.allEmployeesPrivate.set([]);
+        this.loadAllEmployeesForForms();
+      })
     );
   }
 
