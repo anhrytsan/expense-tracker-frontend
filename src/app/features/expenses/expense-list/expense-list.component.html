@@ -90,7 +90,12 @@
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          (click)="openReceipt(row)"
+          class="clickable-row"
+        ></tr>
       </table>
 
       @if (!expenses().length) {
