@@ -85,6 +85,7 @@ export class EmployeeService {
         // Оновлюємо і повний список
         this.allEmployeesPrivate.set([]); // Скидаємо, щоб перезавантажити
         this.loadAllEmployeesForForms();
+        this.getPositions().subscribe(); // Оновлюємо список посад
       })
     );
   }
