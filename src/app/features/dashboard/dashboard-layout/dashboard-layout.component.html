@@ -1,18 +1,34 @@
 <mat-sidenav-container class="dashboard-container">
-  <mat-sidenav mode="side" opened class="sidenav">
+  <mat-sidenav
+    #sidenav
+    class="sidenav"
+    [mode]="isHandset() ? 'over' : 'side'"
+    [opened]="!isHandset()"
+  >
     <mat-toolbar color="primary">Меню</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item routerLink="overview">Головна</a>
-      <a mat-list-item routerLink="expenses">Витрати</a>
-      <a mat-list-item routerLink="departments">Відділи</a>
-      <a mat-list-item routerLink="employees">Співробітники</a>
-      <a mat-list-item routerLink="expense-types">Типи витрат</a>
-      <a mat-list-item routerLink="limits">Встановити ліміт</a>
+      <a mat-list-item routerLink="overview" (click)="isHandset() && sidenav.close()">Головна</a>
+      <a mat-list-item routerLink="expenses" (click)="isHandset() && sidenav.close()">Витрати</a>
+      <a mat-list-item routerLink="departments" (click)="isHandset() && sidenav.close()">Відділи</a>
+      <a mat-list-item routerLink="employees" (click)="isHandset() && sidenav.close()"
+        >Співробітники</a
+      >
+      <a mat-list-item routerLink="expense-types" (click)="isHandset() && sidenav.close()"
+        >Типи витрат</a
+      >
+      <a mat-list-item routerLink="limits" (click)="isHandset() && sidenav.close()"
+        >Встановити ліміт</a
+      >
     </mat-nav-list>
   </mat-sidenav>
 
   <mat-sidenav-content class="sidenav-content">
     <mat-toolbar color="primary" class="main-toolbar">
+      @if (isHandset()) {
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      }
       <span>Облік Внутрішніх Витрат</span>
       <span class="spacer"></span>
       <button mat-icon-button (click)="logout()">
