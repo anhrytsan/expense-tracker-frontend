@@ -13,8 +13,27 @@
       </p>
     </div>
 
+    <div class="filter-controls">
+      <mat-form-field appearance="outline">
+        <mat-label>Сортувати за</mat-label>
+        <mat-select [value]="sortBy()" (selectionChange)="sortBy.set($event.value)">
+          @for (option of sortOptions; track option.value) {
+          <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Напрямок</mat-label>
+        <mat-select [value]="sortDirection()" (selectionChange)="sortDirection.set($event.value)">
+          @for (option of directionOptions(); track option.value) {
+          <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
     <div class="table-responsive-wrapper mat-elevation-z8">
-      <table mat-table [dataSource]="departments()">
+      <table mat-table [dataSource]="sortedDepartments()">
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef>Назва відділу</th>
           <td mat-cell *matCellDef="let department">
@@ -102,7 +121,7 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
 
-      @if (!departments().length) {
+      @if (!sortedDepartments().length) {
       <div class="empty-table-message">
         <p>Відділів поки що немає.</p>
       </div>
