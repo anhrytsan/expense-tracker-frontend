@@ -24,15 +24,22 @@
         } @if (departmentFunds(); as funds) {
         <div class="info-item">
           <mat-icon color="primary">account_balance</mat-icon>
-          <span>Ефективний ліміт: <strong>{{ funds.effectiveLimit | number : '1.2-2' }} грн</strong></span>
+          <span
+            >Ефективний ліміт:
+            <strong>{{ funds.effectiveLimit | number : '1.2-2' }} грн</strong></span
+          >
         </div>
         <div class="info-item">
           <mat-icon color="warn">payment</mat-icon>
-          <span>Витрачено: <strong>{{ funds.spentAmount | number : '1.2-2' }} грн</strong></span>
+          <span
+            >Витрачено: <strong>{{ funds.spentAmount | number : '1.2-2' }} грн</strong></span
+          >
         </div>
         <div class="info-item available">
           <mat-icon>account_balance_wallet</mat-icon>
-          <span>Доступно: <strong>{{ funds.available | number : '1.2-2' }} грн</strong></span>
+          <span
+            >Доступно: <strong>{{ funds.available | number : '1.2-2' }} грн</strong></span
+          >
         </div>
         }
       </div>
@@ -57,23 +64,41 @@
       </mat-form-field>
 
       @if (selectedExpenseType(); as type) {
-        <div class="info-container type-limit">
-          <div class="info-item">
-            <mat-icon>credit_card</mat-icon>
-            <span>Ліміт на транзакцію: <strong>{{ type.limit | number : '1.2-2' }} грн</strong></span>
-          </div>
+      <div class="info-container type-limit">
+        <div class="info-item">
+          <mat-icon>credit_card</mat-icon>
+          <span
+            >Ліміт на транзакцію: <strong>{{ type.limit | number : '1.2-2' }} грн</strong></span
+          >
         </div>
+      </div>
       }
 
       <mat-form-field appearance="outline">
         <mat-label>Сума</mat-label>
         <input matInput type="number" formControlName="amount" placeholder="100.00" />
-        @if(maxAllowedAmount() > 0) {
-        <mat-hint align="start" class="hint-available">
-          Максимально можлива сума: {{ maxAllowedAmount() | number : '1.2-2' }} грн
+
+        @if(maxAllowedAmount() !== null) {
+        <mat-hint
+          align="start"
+          [ngClass]="{
+            'hint-error':
+              (amount.hasError('maxAmountExceeded') && amount.touched) || maxAllowedAmount() === 0,
+            'hint-available': !(
+              (amount.hasError('maxAmountExceeded') && amount.touched) ||
+              maxAllowedAmount() === 0
+            )
+          }"
+        >
+          @if (amount.hasError('maxAmountExceeded') && amount.touched) {
+          {{ amountValidationMessage() }}
+          } @else { Максимально можлива сума: {{ maxAllowedAmount() | number : '1.2-2' }} грн }
         </mat-hint>
+        } @if(amount.hasError('min')) {
+        <mat-error>Сума має бути більшою за 0</mat-error>
+        } @if(amount.hasError('required')) {
+        <mat-error>Це поле є обов'язковим</mat-error>
         }
-        <mat-error>{{ amountValidationMessage() }}</mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline">

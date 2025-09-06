@@ -10,7 +10,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 
 // --- Angular Material Modules ---
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -44,6 +44,7 @@ interface DepartmentFunds {
   standalone: true,
   imports: [
     CommonModule,
+    NgClass,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -56,7 +57,7 @@ interface DepartmentFunds {
     MatProgressSpinnerModule,
   ],
   templateUrl: './expense-create.component.html',
-  styleUrls: ['./expense-create.component.scss'], // Змінив 'styleUrl' на 'styleUrls'
+  styleUrls: ['./expense-create.component.scss'],
 })
 export class ExpenseCreateComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -85,35 +86,40 @@ export class ExpenseCreateComponent implements OnInit {
     expenseType: ['', Validators.required],
   });
 
+  // --- Getter для зручного доступу до контролу в шаблоні ---
+  get amount() {
+    return this.expenseForm.controls.amount;
+  }
+
   // --- Сигнали, що відстежують зміни у формі ---
   selectedDepartmentId = toSignal(this.expenseForm.controls.department.valueChanges);
   selectedEmployeeId = toSignal(this.expenseForm.controls.employee.valueChanges);
   selectedExpenseTypeId = toSignal(this.expenseForm.controls.expenseType.valueChanges);
 
-  // --- Новий обчислюваний сигнал для максимальної суми ---
+  // --- Обчислюваний сигнал для максимальної суми ---
   maxAllowedAmount = computed(() => {
     const funds = this.departmentFunds();
     const type = this.selectedExpenseType();
-
-    if (!funds || !type) {
-      return 0;
+    if (funds === null || type === null) {
+      return null; // Повертаємо null, якщо дані ще не готові
     }
-    // Повертаємо менше з двох значень: доступний ліміт відділу або ліміт типу витрати
     return Math.min(funds.available, type.limit);
   });
 
-
   // --- Повідомлення для валідації суми ---
   amountValidationMessage = computed(() => {
-    const amount = this.expenseForm.controls.amount.value ?? 0;
+    const amount = this.amount.value ?? 0;
     if (amount <= 0) return '';
 
     const maxAmount = this.maxAllowedAmount();
-    if (maxAmount > 0 && amount > maxAmount) {
-      // Визначаємо, який саме ліміт було перевищено
+    if (maxAmount === null) return ''; // Дані ще завантажуються
+
+    if (amount > maxAmount) {
+      if (maxAmount === 0) {
+        return 'Витрати неможливі, доступний ліміт 0 грн';
+      }
       const funds = this.departmentFunds();
       const type = this.selectedExpenseType();
-
       if (funds && amount > funds.available) {
         return `Перевищено доступний ліміт відділу (${funds.available} грн)`;
       }
@@ -121,7 +127,6 @@ export class ExpenseCreateComponent implements OnInit {
         return `Перевищено ліміт транзакції для цього типу (${type.limit} грн)`;
       }
     }
-
     return '';
   });
 
@@ -131,30 +136,40 @@ export class ExpenseCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadFormData();
-    // Додаємо валідатор до поля amount
-    this.expenseForm.controls.amount.addValidators(this.amountValidator());
+    this.amount.addValidators(this.amountValidator());
   }
 
   private setupEffects(): void {
     // Фільтрація співробітників при зміні відділу
-    effect(() => {
-      const departmentId = this.selectedDepartmentId();
-      const allEmployees = this.employees();
-      this.filteredEmployees.set(
-        departmentId ? allEmployees.filter((emp) => emp.department?._id === departmentId) : allEmployees
-      );
-      const currentEmployeeId = this.expenseForm.getRawValue().employee;
-      if (currentEmployeeId && !this.filteredEmployees().some((emp) => emp._id === currentEmployeeId)) {
-        this.expenseForm.controls.employee.reset('');
-      }
-    }, { allowSignalWrites: true });
+    effect(
+      () => {
+        const departmentId = this.selectedDepartmentId();
+        const allEmployees = this.employees();
+        this.filteredEmployees.set(
+          departmentId
+            ? allEmployees.filter((emp) => emp.department?._id === departmentId)
+            : allEmployees
+        );
+        const currentEmployeeId = this.expenseForm.getRawValue().employee;
+        if (
+          currentEmployeeId &&
+          !this.filteredEmployees().some((emp) => emp._id === currentEmployeeId)
+        ) {
+          this.expenseForm.controls.employee.reset('');
+        }
+      },
+      { allowSignalWrites: true }
+    );
 
     // Авто-вибір відділу при виборі співробітника
     effect(() => {
       const employeeId = this.selectedEmployeeId();
       if (employeeId) {
         const employee = this.employees().find((emp) => emp._id === employeeId);
-        if (employee?.department && this.expenseForm.controls.department.value !== employee.department._id) {
+        if (
+          employee?.department &&
+          this.expenseForm.controls.department.value !== employee.department._id
+        ) {
           this.expenseForm.controls.department.setValue(employee.department._id);
         }
       }
@@ -170,7 +185,7 @@ export class ExpenseCreateComponent implements OnInit {
           next: (funds) => {
             this.departmentFunds.set(funds as DepartmentFunds);
             this.isLoadingFunds.set(false);
-            this.expenseForm.controls.amount.updateValueAndValidity();
+            this.amount.updateValueAndValidity();
           },
           error: () => this.isLoadingFunds.set(false),
         });
@@ -183,7 +198,7 @@ export class ExpenseCreateComponent implements OnInit {
     effect(() => {
       const typeId = this.selectedExpenseTypeId();
       this.selectedExpenseType.set(this.expenseTypes().find((t) => t._id === typeId) || null);
-      this.expenseForm.controls.amount.updateValueAndValidity();
+      this.amount.updateValueAndValidity();
     });
   }
 
@@ -197,11 +212,14 @@ export class ExpenseCreateComponent implements OnInit {
   private amountValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const amount = control.value;
-      if (amount <= 0) return null;
-
       const maxAmount = this.maxAllowedAmount();
-      if (maxAmount > 0 && amount > maxAmount) {
-         return { maxAmountExceeded: true };
+
+      if (maxAmount === null || amount <= 0) {
+        return null;
+      }
+
+      if (amount > maxAmount) {
+        return { maxAmountExceeded: true };
       }
 
       return null;
