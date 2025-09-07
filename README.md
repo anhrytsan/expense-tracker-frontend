@@ -17,6 +17,10 @@ This is a comprehensive single-page application (SPA) built with Angular for man
 - **Budget Control:** Set and manage monthly spending limits for each department.
 - **Responsive Design:** A clean, modern interface built with Angular Material that works on both desktop and mobile devices.
 
+## 🟢 Live Demo
+
+The project is deployed and you can view a live demo here: **[https://expense-tracker-frontend-rho-nine.vercel.app/](https://expense-tracker-frontend-rho-nine.vercel.app/)**
+
 ## 🛠️ Tech Stack
 
 - **Angular:** A powerful framework for building dynamic and responsive web applications.
@@ -70,4 +74,3 @@ To create a production-ready build, run:
 
 ```bash
 ng build
-```
