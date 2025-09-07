@@ -9,6 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { CommonModule, NgClass } from '@angular/common';
+import { forkJoin } from 'rxjs'; // import forkJoin for parallel requests
 
 // --- Angular Material Modules ---
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -73,6 +74,7 @@ export class ExpenseCreateComponent implements OnInit {
   departmentFunds = signal<DepartmentFunds | null>(null);
   selectedExpenseType = signal<ExpenseType | null>(null);
   isLoadingFunds = signal(false);
+  isInitialDataLoading = signal(true); // Signal for initial data loading state
 
   expenseForm = this.fb.nonNullable.group({
     amount: [0, [Validators.required, Validators.min(0.01)]],
@@ -197,10 +199,22 @@ export class ExpenseCreateComponent implements OnInit {
     });
   }
 
+  // Load initial data for the form
   private loadFormData(): void {
-    this.departmentService.getDepartments().subscribe();
-    this.employeeService.loadAllEmployeesForForms();
-    this.expenseTypeService.getExpenseTypes().subscribe();
+    forkJoin({
+      departments: this.departmentService.getDepartments(),
+      employees: this.employeeService.loadAllEmployeesForForms(),
+      expenseTypes: this.expenseTypeService.getExpenseTypes(),
+    }).subscribe({
+      next: () => {
+        this.isInitialDataLoading.set(false);
+      },
+      error: (err) => {
+        this.isInitialDataLoading.set(false);
+        this.notificationService.showError('Не вдалося завантажити дані для форми.');
+        console.error(err);
+      },
+    });
   }
 
   // Validator for amount field

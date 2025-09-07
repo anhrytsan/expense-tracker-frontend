@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Department } from './department.service';
-import { tap } from 'rxjs';
+import { tap, of, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface Employee {
@@ -68,14 +68,16 @@ export class EmployeeService {
 
   // to load all employees
   loadAllEmployeesForForms() {
-    // if the data has already been loaded, we do not make a second request
     if (this.allEmployeesPrivate().length > 0) {
-      return;
+      return of(null);
     }
     const params = new HttpParams({ fromObject: { limit: '0' } });
-    this.http.get<PaginatedEmployees>(this.apiUrl, { params }).subscribe((data) => {
-      this.allEmployeesPrivate.set(data.docs);
-    });
+    return this.http.get<PaginatedEmployees>(this.apiUrl, { params }).pipe(
+      tap((data) => {
+        this.allEmployeesPrivate.set(data.docs);
+      }),
+      map(() => null) // Unify return type to Observable<null>
+    );
   }
 
   createEmployee(employeeData: CreateEmployeeDto) {
@@ -83,7 +85,7 @@ export class EmployeeService {
       tap(() => {
         this.getEmployees().subscribe();
         this.allEmployeesPrivate.set([]);
-        this.loadAllEmployeesForForms();
+        this.loadAllEmployeesForForms().subscribe();
         this.getPositions().subscribe();
       })
     );
@@ -94,7 +96,7 @@ export class EmployeeService {
       tap(() => {
         this.getEmployees().subscribe();
         this.allEmployeesPrivate.set([]);
-        this.loadAllEmployeesForForms();
+        this.loadAllEmployeesForForms().subscribe();
       })
     );
   }
@@ -104,7 +106,7 @@ export class EmployeeService {
       tap(() => {
         this.getEmployees().subscribe();
         this.allEmployeesPrivate.set([]);
-        this.loadAllEmployeesForForms();
+        this.loadAllEmployeesForForms().subscribe();
       })
     );
   }

@@ -1,4 +1,4 @@
-@if (employees().length && expenseTypes().length && departments().length) {
+@if (!isInitialDataLoading()) {
 <mat-card>
   <mat-card-header>
     <mat-card-title>Додати нову витрату</mat-card-title>
