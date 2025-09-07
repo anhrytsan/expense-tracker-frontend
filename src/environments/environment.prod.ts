@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://your-production-api-domain.com' // Адреса вашого реального бекенду
+  apiUrl: 'https://expense-tracker-backend-m8qw.onrender.com'
 };
