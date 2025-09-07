@@ -1,6 +1,6 @@
 .table-card {
   margin-top: 20px;
-  position: relative; // Важливо для позиціонування кнопки
+  position: relative;
 }
 
 .filter-controls {
@@ -11,7 +11,6 @@
 }
 
 mat-card-header {
-  // Додаємо відступ знизу, щоб кнопка не наїжджала на контент
   padding-bottom: 24px;
 }
 
@@ -19,7 +18,7 @@ mat-card-header {
   position: absolute;
   top: 16px;
   right: 16px;
-  z-index: 1; // Щоб кнопка була поверх інших елементів
+  z-index: 1;
 }
 
 table {

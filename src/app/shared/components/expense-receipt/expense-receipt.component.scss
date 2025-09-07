@@ -26,19 +26,15 @@ mat-list-item {
   margin-bottom: 8px;
 }
 
-// --- ВИПРАВЛЕНІ СТИЛІ ДЛЯ ДРУКУ ---
 @media print {
-  // 1. Ховаємо основний layout додатку (все, крім модального вікна)
   body > app-root > app-dashboard-layout {
     display: none !important;
   }
 
-  // 2. "Витягуємо" контейнер модального вікна нагору для друку
   body > .cdk-overlay-container {
     position: static !important;
   }
 
-  // 3. Розтягуємо панель модального вікна на всю ширину
   .cdk-overlay-pane {
     position: static !important;
     width: 100% !important;
@@ -49,7 +45,6 @@ mat-list-item {
     border: none !important;
   }
 
-  // 4. Прибираємо зайві стилі з самого вікна
   mat-dialog-container {
     padding: 0 !important;
     box-shadow: none !important;
@@ -57,7 +52,6 @@ mat-list-item {
     background: white !important;
   }
 
-  // 5. Ховаємо кнопки "Закрити" та "Друк"
   .no-print {
     display: none !important;
   }

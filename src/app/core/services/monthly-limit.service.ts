@@ -43,7 +43,6 @@ export class MonthlyLimitService {
     return this.http
       .post<MonthlyLimit>(this.apiUrl, limitData)
       .pipe(
-        // 3. Оновлюємо і ліміти, і відділи
         tap(() => {
           this.getMonthlyLimits().subscribe();
           this.departmentService.getDepartments().subscribe();
@@ -56,7 +55,7 @@ export class MonthlyLimitService {
     return this.http
       .patch<MonthlyLimit>(`${this.apiUrl}/${id}`, { limitAmount })
       .pipe(
-        // 3. Оновлюємо і ліміти, і відділи
+        // Update both limits and departments
         tap(() => {
           this.getMonthlyLimits().subscribe();
           this.departmentService.getDepartments().subscribe();
@@ -68,7 +67,7 @@ export class MonthlyLimitService {
     return this.http
       .delete<void>(`${this.apiUrl}/${id}`)
       .pipe(
-        // 3. Оновлюємо і ліміти, і відділи
+        // Update both limits and departments
         tap(() => {
           this.getMonthlyLimits().subscribe();
           this.departmentService.getDepartments().subscribe();

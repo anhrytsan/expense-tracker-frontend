@@ -8,7 +8,6 @@ import { map } from 'rxjs/operators';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 // Angular Material & Services...
-// ... (решта ваших імпортів)
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -38,10 +37,10 @@ export class DashboardLayoutComponent {
   private router = inject(Router);
   private breakpointObserver = inject(BreakpointObserver);
 
-  // 2. Перетворюємо Observable на сигнал
+  // Transform Observable to Signal
   isHandset = toSignal(
     this.breakpointObserver.observe(Breakpoints.Handset).pipe(map((result) => result.matches)),
-    { initialValue: false } // Початкове значення, доки Observable не спрацює
+    { initialValue: false } // Initial value before the first emission
   );
 
   logout() {

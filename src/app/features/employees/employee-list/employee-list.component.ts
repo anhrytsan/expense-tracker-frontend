@@ -1,5 +1,3 @@
-// front/src/app/features/employees/employee-list/employee-list.component.ts
-
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { filter } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -57,7 +55,7 @@ export class EmployeeListComponent implements OnInit {
   private employeeService = inject(EmployeeService);
   private departmentService = inject(DepartmentService);
   private notificationService = inject(NotificationService);
-  private dialog = inject(MatDialog); // Інжектуємо сервіс діалогів
+  private dialog = inject(MatDialog);
 
   employees = this.employeeService.employees;
   totalEmployees = this.employeeService.totalEmployees;
@@ -79,7 +77,7 @@ export class EmployeeListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadFilterData();
-    this.loadEmployees(); // Первинне завантаження даних
+    this.loadEmployees();
 
     this.filterForm.valueChanges
       .pipe(

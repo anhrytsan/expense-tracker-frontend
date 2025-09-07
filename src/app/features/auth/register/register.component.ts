@@ -36,7 +36,7 @@ export const passwordsMatchValidator: ValidatorFn = (control: AbstractControl): 
     MatIconModule
   ],
   templateUrl: './register.component.html',
-  styleUrl: '../login/login.component.scss' // Можна перевикористати стилі з логіна
+  styleUrl: '../login/login.component.scss',
 })
 export class RegisterComponent {
   private fb = inject(FormBuilder);

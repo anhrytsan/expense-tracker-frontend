@@ -1,27 +1,22 @@
-// front/src/app/features/expenses/expense-create/expense-create.component.scss
-
-// Загальний контейнер для інформаційних блоків
 .info-container {
   display: flex;
-  flex-wrap: wrap; // Дозволяємо переносити елементи
-  gap: 16px; // Відстань між елементами
+  flex-wrap: wrap;
+  gap: 16px;
   padding: 12px;
   background-color: #f9f9f9;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
-  margin-top: -8px; // Компенсуємо відступ форми
+  margin-top: -8px;
   margin-bottom: 16px;
 }
 
-// Контейнер для ліміту типу витрати
 .info-container.type-limit {
   margin-top: -8px;
   margin-bottom: 16px;
-  background-color: #f0f4f8; // Трохи інший фон для візуального розділення
+  background-color: #f0f4f8;
   border-color: #d6e0ea;
 }
 
-// Окремий інформаційний елемент (іконка + текст)
 .info-item {
   display: flex;
   align-items: center;
@@ -35,9 +30,8 @@
     height: 20px;
   }
 
-  // Виділяємо доступну суму
   &.available {
-    color: #2e7d32; // Темно-зелений
+    color: #2e7d32;
     font-weight: 500;
 
     mat-icon {
@@ -46,7 +40,6 @@
   }
 }
 
-// Контейнер для спінера завантаження
 .spinner-container {
   display: flex;
   align-items: center;
@@ -55,13 +48,11 @@
   color: #888;
 }
 
-// Стиль для підказки під полем суми
 .hint-available {
   color: #388e3c;
   font-weight: 500;
 }
 
-// Стилі для картки завантаження
 .loading-data-card {
   display: flex;
   flex-direction: column;
@@ -70,5 +61,5 @@
   gap: 16px;
   padding: 24px;
   min-height: 200px;
-  color: #666;
+  color: #6c6b6b;
 }

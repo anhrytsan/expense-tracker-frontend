@@ -6,10 +6,10 @@ export const publicGuard: CanActivateFn = (route, state) => {
   const token = localStorage.getItem('auth_token');
 
   if (token) {
-    // Якщо токен є (користувач залогінений), перенаправляємо на дашборд
+    // If token exists (user is logged in), redirect to control panel
     return router.createUrlTree(['/dashboard']);
   } else {
-    // Якщо токена немає, дозволяємо доступ
+    // If there is no token, allow access
     return true;
   }
 };

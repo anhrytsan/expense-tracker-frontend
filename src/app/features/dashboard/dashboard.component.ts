@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
   standalone: true,
   imports: [
     MatCardModule,
-    CommonModule, // Додай сюди
+    CommonModule,
     MatProgressBarModule,
     MatListModule,
     MatIconModule,
@@ -34,7 +34,7 @@ export class DashboardComponent implements OnInit {
   // Percent calculation for progress bar
   calculateProgress(spent: number, limit: number): number {
     if (limit === 0) {
-      return 100; // If limit 0, but expenses exist, show as 100% limit excess
+      return 100; // If limit is 0, show full progress to indicate no limit set
     }
     return (spent / limit) * 100;
   }

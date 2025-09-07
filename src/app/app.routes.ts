@@ -33,11 +33,11 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: DashboardLayoutComponent, // Використовуємо наш новий layout
+    component: DashboardLayoutComponent,
     canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'overview', pathMatch: 'full' },
-      { path: 'overview', component: DashboardComponent }, // Старий дашборд тепер "Головна"
+      { path: 'overview', component: DashboardComponent },
       { path: 'expenses', component: ExpenseListComponent },
       { path: 'departments', component: DepartmentListComponent },
       { path: 'employees', component: EmployeeListComponent },

@@ -101,7 +101,7 @@ export class MonthlyLimitListComponent implements OnInit, AfterViewInit {
         carryover: departmentData?.carryover,
         effectiveLimit: departmentData?.effectiveLimit,
         available: departmentData?.available,
-        // Створюємо поле для сортування по періоду
+        // Create field for sorting by period (year+month)
         periodSort: new Date(limit.year, limit.month - 1).getTime()
       };
     });
@@ -116,6 +116,9 @@ export class MonthlyLimitListComponent implements OnInit, AfterViewInit {
       this.sortDirection.set('desc');
     }
 
+    // Sort by computed field or direct field
+    // If sorting by period, use periodSort for correct date sorting
+    // Otherwise, sort by the selected key
     data.sort((a, b) => {
       const valA = key === 'period' ? a.periodSort : a[key as keyof MonthlyLimit] ?? 0;
       const valB = key === 'period' ? b.periodSort : b[key as keyof MonthlyLimit] ?? 0;

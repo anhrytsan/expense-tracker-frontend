@@ -3,8 +3,6 @@ import { Injectable, inject, signal } from '@angular/core';
 import { tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-// Move later to shared/models
-
 interface AuthResponse {
   token: string;
   user: {

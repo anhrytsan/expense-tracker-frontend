@@ -67,7 +67,8 @@ export class ExpenseTypeListComponent implements OnInit, AfterViewInit {
     const direction = this.sortDirection();
 
     data.sort((a, b) => {
-      // Сортуємо за полем 'limit', обробляємо можливий null/undefined
+      // sort by limit, putting undefined limits at the end
+      // If limit is undefined, treat it as -Infinity for ascending sort
       const valA = a.limit ?? -Infinity;
       const valB = b.limit ?? -Infinity;
       const comparison = valA - valB;

@@ -1,5 +1,3 @@
-// front/src/app/features/departments/department-list/department-list.component.ts
-
 import { AfterViewInit, Component, OnInit, inject, signal, computed, ViewChild, effect } from '@angular/core';
 import { filter } from 'rxjs';
 import { Department, DepartmentService } from '../../../core/services/department.service';

@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router'; // Додали RouterLink
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { NotificationService } from '../../../core/services/notification.service'; // <-- 1. Імпортуємо сервіс
+import { NotificationService } from '../../../core/services/notification.service';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
   selector: 'app-login',
   standalone: true,
   imports: [
-    RouterLink, // Додали RouterLink
+    RouterLink,
     ReactiveFormsModule,
     MatCardModule,
     MatFormFieldModule,
@@ -45,7 +45,6 @@ export class LoginComponent {
           // Navigate to dashboard on successful login
           this.router.navigate(['/dashboard']);
         },
-        // --- 3. Змінюємо цей блок ---
         error: (err) => {
           const message = err.error.message || 'Невідома помилка входу';
           this.notificationService.showError(message);

@@ -1,5 +1,3 @@
-// front/src/app/features/expenses/expense-list/expense-list.component.ts
-
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -50,7 +48,7 @@ export class ExpenseListComponent implements OnInit {
   private departmentService = inject(DepartmentService);
   private employeeService = inject(EmployeeService);
   private expenseTypeService = inject(ExpenseTypeService);
-  private dialog = inject(MatDialog); // Інжектуємо MatDialog
+  private dialog = inject(MatDialog);
 
   // Data signals
   expenses = this.expenseService.expenses;
@@ -127,7 +125,6 @@ export class ExpenseListComponent implements OnInit {
     this.loadExpenses();
   }
 
-  // Новий метод для відкриття чека
   openReceipt(expense: Expense): void {
     this.dialog.open(ExpenseReceiptComponent, {
       width: '500px',

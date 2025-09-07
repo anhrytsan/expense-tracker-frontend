@@ -3,7 +3,6 @@
   gap: 20px;
   grid-template-columns: 1fr 1fr;
 
-  // Коли екран менший за 960px
   @media (max-width: 960px) {
     grid-template-columns: 1fr;
   }

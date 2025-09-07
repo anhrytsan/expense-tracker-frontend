@@ -19,7 +19,7 @@ export interface CreateEmployeeDto {
   department: string; // We send only department ID when creating
 }
 
-// --- NEW --- Interface for updating
+// Interface for updating
 export interface UpdateEmployeeDto {
   name?: string;
   position?: string;
@@ -40,11 +40,11 @@ export class EmployeeService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/api/employees`;
 
-  // Сигнал для пагінованого списку (використовується в EmployeeListComponent)
+  // Signal for employee list in EmployeeListComponent
   private employeesPrivate = signal<Employee[]>([]);
   public readonly employees = this.employeesPrivate.asReadonly();
 
-  // --- НОВИЙ СИГНАЛ --- для повного списку (для форм)
+  // For forms (e.g. in ExpenseCreateComponent)
   private allEmployeesPrivate = signal<Employee[]>([]);
   public readonly allEmployees = this.allEmployeesPrivate.asReadonly();
 
@@ -54,7 +54,7 @@ export class EmployeeService {
   private positionsPrivate = signal<string[]>([]);
   public readonly positions = this.positionsPrivate.asReadonly();
 
-  // Цей метод залишається для пагінації
+  // For pagination and filtering
   getEmployees(filters: any = {}) {
     const params = new HttpParams({ fromObject: filters });
 
@@ -66,9 +66,9 @@ export class EmployeeService {
     );
   }
 
-  // --- НОВИЙ МЕТОД --- для завантаження всіх співробітників
+  // to load all employees
   loadAllEmployeesForForms() {
-    // Якщо дані вже завантажені, не робимо повторний запит
+    // if the data has already been loaded, we do not make a second request
     if (this.allEmployeesPrivate().length > 0) {
       return;
     }
@@ -82,10 +82,9 @@ export class EmployeeService {
     return this.http.post<Employee>(this.apiUrl, employeeData).pipe(
       tap(() => {
         this.getEmployees().subscribe();
-        // Оновлюємо і повний список
-        this.allEmployeesPrivate.set([]); // Скидаємо, щоб перезавантажити
+        this.allEmployeesPrivate.set([]);
         this.loadAllEmployeesForForms();
-        this.getPositions().subscribe(); // Оновлюємо список посад
+        this.getPositions().subscribe();
       })
     );
   }

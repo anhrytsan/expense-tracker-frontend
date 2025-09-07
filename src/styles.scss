@@ -48,36 +48,32 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   color: white;
 }
 
-/* --- Глобальні стилі для форм --- */
-
-// Додаємо відступ знизу для всіх заголовків у картках
 mat-card-title {
   margin-bottom: 16px !important;
 }
 
-// Задаємо єдиний вигляд для всіх форм всередині <mat-card-content>
 mat-card-content form {
   display: flex;
   flex-direction: column;
 
-  // Кожен елемент форми (крім першого) отримає відступ зверху
+  // Every direct child of the form (form fields, buttons, etc.) should have spacing between them
   > * + * {
     margin-top: 12px;
   }
 
-  // Кнопки відсуваємо вправо і даємо їм більше місця зверху
+  // Push the submit button to the right
   > button[mat-raised-button] {
     align-self: flex-end;
     margin-top: 16px;
   }
 }
 
-// Контейнер для групи кнопок (наприклад "Зберегти" і "Скасувати")
+// Container for form action buttons (Save, Cancel, etc.)
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  margin-top: 16px; // Додатковий відступ зверху
+  margin-top: 16px; // Margin above the button group
 }
 
 // Wrapper for responsive tables

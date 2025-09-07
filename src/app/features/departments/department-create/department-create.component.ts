@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DepartmentService } from '../../../core/services/department.service';
-import { NotificationService } from '../../../core/services/notification.service'; // <-- Додай це
+import { NotificationService } from '../../../core/services/notification.service';
 
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -26,9 +26,6 @@ export class DepartmentCreateComponent {
   private fb = inject(FormBuilder);
   private departmentService = inject(DepartmentService);
   private notificationService = inject(NotificationService);
-
-  // @Output() departmentCreated = new EventEmitter<void>();
-
 
   departmentForm = this.fb.nonNullable.group({
     name: ['', Validators.required],

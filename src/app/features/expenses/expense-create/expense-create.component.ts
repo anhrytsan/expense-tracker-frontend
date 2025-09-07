@@ -1,5 +1,3 @@
-// front/src/app/features/expenses/expense-create/expense-create.component.ts
-
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -30,7 +28,7 @@ import { ExpenseTypeService } from '../../../core/services/expense-type.service'
 import { ExpenseService, ExpenseType } from '../../../core/services/expense.service';
 import { NotificationService } from '../../../core/services/notification.service';
 
-// --- Інтерфейс для даних про ліміти відділу ---
+// Interface for department funds data
 interface DepartmentFunds {
   limitAmount: number;
   spentAmount: number;
@@ -67,12 +65,10 @@ export class ExpenseCreateComponent implements OnInit {
   private expenseService = inject(ExpenseService);
   private notificationService = inject(NotificationService);
 
-  // --- Сигнали з даними ---
   departments = this.departmentService.departments;
   employees = this.employeeService.allEmployees;
   expenseTypes = this.expenseTypeService.expenseTypes;
 
-  // --- Сигнали для роботи з лімітами ---
   filteredEmployees = signal<Employee[]>([]);
   departmentFunds = signal<DepartmentFunds | null>(null);
   selectedExpenseType = signal<ExpenseType | null>(null);
@@ -86,33 +82,32 @@ export class ExpenseCreateComponent implements OnInit {
     expenseType: ['', Validators.required],
   });
 
-  // --- Getter для зручного доступу до контролу в шаблоні ---
+  // Getter for easy access to amount control
   get amount() {
     return this.expenseForm.controls.amount;
   }
 
-  // --- Сигнали, що відстежують зміни у формі ---
   selectedDepartmentId = toSignal(this.expenseForm.controls.department.valueChanges);
   selectedEmployeeId = toSignal(this.expenseForm.controls.employee.valueChanges);
   selectedExpenseTypeId = toSignal(this.expenseForm.controls.expenseType.valueChanges);
 
-  // --- Обчислюваний сигнал для максимальної суми ---
+  // Computed for maximum allowed amount based on department funds and expense type limit
   maxAllowedAmount = computed(() => {
     const funds = this.departmentFunds();
     const type = this.selectedExpenseType();
     if (funds === null || type === null) {
-      return null; // Повертаємо null, якщо дані ще не готові
+      return null; // Return null if data not ready
     }
     return Math.min(funds.available, type.limit);
   });
 
-  // --- Повідомлення для валідації суми ---
+  // Message for amount validation
   amountValidationMessage = computed(() => {
     const amount = this.amount.value ?? 0;
     if (amount <= 0) return '';
 
     const maxAmount = this.maxAllowedAmount();
-    if (maxAmount === null) return ''; // Дані ще завантажуються
+    if (maxAmount === null) return ''; // Data not ready yet
 
     if (amount > maxAmount) {
       if (maxAmount === 0) {
@@ -140,7 +135,7 @@ export class ExpenseCreateComponent implements OnInit {
   }
 
   private setupEffects(): void {
-    // Фільтрація співробітників при зміні відділу
+    // Employee list depends on selected department
     effect(
       () => {
         const departmentId = this.selectedDepartmentId();
@@ -161,7 +156,7 @@ export class ExpenseCreateComponent implements OnInit {
       { allowSignalWrites: true }
     );
 
-    // Авто-вибір відділу при виборі співробітника
+    // Auto-select department when employee changes
     effect(() => {
       const employeeId = this.selectedEmployeeId();
       if (employeeId) {
@@ -175,7 +170,7 @@ export class ExpenseCreateComponent implements OnInit {
       }
     });
 
-    // Отримання фінансових даних при зміні відділу
+    // Get finance data when department changes
     effect(() => {
       const departmentId = this.selectedDepartmentId();
       if (departmentId) {
@@ -194,7 +189,7 @@ export class ExpenseCreateComponent implements OnInit {
       }
     });
 
-    // Оновлення обраного типу витрат
+    // Update selected expense type
     effect(() => {
       const typeId = this.selectedExpenseTypeId();
       this.selectedExpenseType.set(this.expenseTypes().find((t) => t._id === typeId) || null);
@@ -208,7 +203,7 @@ export class ExpenseCreateComponent implements OnInit {
     this.expenseTypeService.getExpenseTypes().subscribe();
   }
 
-  // --- Валідатор для поля суми ---
+  // Validator for amount field
   private amountValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const amount = control.value;
