@@ -1,59 +1,72 @@
-# ExpenseTrackerFrontend
+# Expense Tracker Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.0.
+This document provides instructions for setting up and running the frontend of the Expense Tracker application.
 
-## Development server
+## 📜 About The Project
 
-To start a local development server, run:
+This is a comprehensive single-page application (SPA) built with Angular for managing internal company expenses. It provides a user-friendly interface for tracking expenses, managing departments and employees, and setting monthly spending limits.
 
-```bash
-ng serve
-```
+## ✨ Features
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+* **User Authentication:** Secure registration and login system using JWT.
+* **Dashboard:** An overview of expenses for the current month, including total spending, overall limits, and recent transactions.
+* **Expense Management:** Create new expenses, view a detailed list with filtering and pagination, and view individual expense receipts.
+* **Department Management:** Full CRUD (Create, Read, Update, Delete) functionality for company departments, with details on employee count and budget status.
+* **Employee Management:** Full CRUD functionality for employees, including their name, position, and assigned department.
+* **Expense Categories:** Manage different types of expenses, each with a specific transaction limit.
+* **Budget Control:** Set and manage monthly spending limits for each department.
+* **Responsive Design:** A clean, modern interface built with Angular Material that works on both desktop and mobile devices.
 
-## Code scaffolding
+## 🛠️ Tech Stack
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+* **Angular:** A powerful framework for building dynamic and responsive web applications.
+* **TypeScript:** For type safety and improved code quality.
+* **Angular Material:** A UI component library for creating a consistent and modern user experience.
+* **RxJS:** For reactive programming and managing asynchronous data streams.
+* **SCSS:** For more advanced and maintainable styling.
 
-```bash
-ng generate component component-name
-```
+## 🚀 Getting Started
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Follow these steps to get the frontend running on your local machine.
 
-```bash
-ng generate --help
-```
+### Prerequisites
 
-## Building
+* Node.js (v18 or higher is recommended)
+* Angular CLI
 
-To build the project run:
+### Installation
 
+1.  **Clone the repository:**
+    ```bash
+    git clone <your-repository-url>
+    ```
+2.  **Navigate to the frontend directory:**
+    ```bash
+    cd expense-tracker-frontend
+    ```
+3.  **Install NPM packages:**
+    ```bash
+    npm install
+    ```
+
+### Configuration
+
+The application needs to connect to the backend API. The API URL is configured in the environment files.
+
+1.  Open `src/environments/environment.ts` for development.
+2.  Set the `apiUrl` to the address of your running backend server (e.g., `http://localhost:3000`).
+
+### Running the Application
+
+1.  **Start the development server:**
+    ```bash
+    ng serve
+    ```
+2.  Open your browser and navigate to `http://localhost:4200/`.
+
+### Building for Production
+
+To create a production-ready build, run:
 ```bash
 ng build
 ```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
