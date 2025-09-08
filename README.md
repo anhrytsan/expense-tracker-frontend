@@ -21,6 +21,8 @@ This is a comprehensive single-page application (SPA) built with Angular for man
 
 The project is deployed and you can view a live demo here: **[https://expense-tracker-frontend-rho-nine.vercel.app/](https://expense-tracker-frontend-rho-nine.vercel.app/)**
 
+**Please note:** The frontend is deployed on **Vercel**, and the backend is on **Render** (free plan). This may cause a delay on the first request while the server wakes up.
+
 ## 🛠️ Tech Stack
 
 - **Angular:** A powerful framework for building dynamic and responsive web applications.
