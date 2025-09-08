@@ -6,6 +6,9 @@ This document provides instructions for setting up and running the frontend of t
 
 This is a comprehensive single-page application (SPA) built with Angular for managing internal company expenses. It provides a user-friendly interface for tracking expenses, managing departments and employees, and setting monthly spending limits.
 
+The backend repository for this project can be found here: **[https://github.com/anhrytsan/expense-tracker-backend](https://github.com/anhrytsan/expense-tracker-backend)**
+
+
 ## ✨ Features
 
 - **User Authentication:** Secure registration and login system using JWT.
